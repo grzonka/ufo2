@@ -20,20 +20,11 @@ public class Ufo2 extends ApplicationAdapter {
   Sprite sprite;
   Sprite backgroundSprite;
 
-	/*
-	Other functions that can be implemented are:
-	resize()
-	pause()
-	resume()
-	*/
-
   @Override
   public void create() {
     batch = new SpriteBatch();
     background = new Texture(Gdx.files.internal("background.png"));
     smallBoy = new Texture(Gdx.files.internal("small_boy.png"));
-    font = new BitmapFont();
-    font.setColor(Color.BLACK);
     backgroundSprite = new Sprite(background);
     sprite = new Sprite(smallBoy);
   }
@@ -59,8 +50,6 @@ public class Ufo2 extends ApplicationAdapter {
     }
 
     batch.begin();
-    //font.draw(batch, "Hello, World", 200, 200);
-    //batch.draw(img, 0, 0);
     backgroundSprite.draw(batch);
     sprite.draw(batch);
     batch.end();
@@ -81,9 +70,7 @@ public class Ufo2 extends ApplicationAdapter {
   @Override
   public void dispose() {
     batch.dispose();
-    //img.dispose();
     background.dispose();
     smallBoy.dispose();
-    font.dispose();
   }
 }
