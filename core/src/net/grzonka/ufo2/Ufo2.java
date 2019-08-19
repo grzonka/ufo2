@@ -46,7 +46,7 @@ public class Ufo2 extends ApplicationAdapter {
       sprite.translateY(3f);
     }
     if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-      sprite.translateY(-3f);
+      sprite.translateY(-3f);/
     }
 
     batch.begin();
