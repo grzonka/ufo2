@@ -24,7 +24,7 @@ public class Ufo2 extends ApplicationAdapter {
   public void create() {
     batch = new SpriteBatch();
     background = new Texture(Gdx.files.internal("background.png"));
-    smallBoy = new Texture(Gdx.files.internal("small_boy.png"));
+    smallBoy = new Texture(Gdx.files.internal("small_boy_transparent.png"));
     backgroundSprite = new Sprite(background);
     sprite = new Sprite(smallBoy);
   }
@@ -37,16 +37,19 @@ public class Ufo2 extends ApplicationAdapter {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-      sprite.translateX(-3f);
+      sprite.translateX(-1f);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-      sprite.translateX(3f);
+      sprite.translateX(1f);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-      sprite.translateY(3f);
+      sprite.translateY(1f);
     }
     if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-      sprite.translateY(-3f);/
+      sprite.translateY(-1f);
+    }
+    if (Gdx.input.isKeyPressed(Keys.R)) {
+      sprite.rotate(4f);
     }
 
     batch.begin();
