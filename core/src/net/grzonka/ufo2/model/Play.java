@@ -3,6 +3,7 @@ package net.grzonka.ufo2.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,11 +20,11 @@ import com.badlogic.gdx.utils.Array;
 import net.grzonka.ufo2.Game;
 import net.grzonka.ufo2.controller.GameStateManager;
 import net.grzonka.ufo2.controller.MyContactListener;
-import org.w3c.dom.Text;
 
 public class Play extends GameState {
 
-  private World world;
+
+    private World world;
   private MyContactListener customContactListener;
   private Box2DDebugRenderer debugRenderer;
 
@@ -38,6 +39,9 @@ public class Play extends GameState {
   private Sprite boySprite;
   private Body boyBody;
 
+  private Sound soundeffectWarp;
+  private final Sound soundeffectTheme;
+
   private OrthographicCamera camera;
 
 
@@ -46,6 +50,7 @@ public class Play extends GameState {
   final float moveSpeed = 1.5f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
+
 
   public Play(GameStateManager gsm) {
     super(gsm);
@@ -56,6 +61,11 @@ public class Play extends GameState {
 
     world = new World(new Vector2(0, -10f), true);
     world.setContactListener(customContactListener);
+
+   soundeffectWarp = Gdx.audio.newSound(Gdx.files.internal("sound/warp.ogg"));
+   soundeffectTheme = Gdx.audio.newSound(Gdx.files.internal("sound/theme.ogg"));
+
+   soundeffectTheme.loop(1f);
 
     debugRenderer = new Box2DDebugRenderer();
 
@@ -128,7 +138,7 @@ public class Play extends GameState {
     boyShape.setAsBox(8, 9.5f); // for some reason 1 unit here = 2px
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = boyShape;
-    fixtureDef.density = 0.5f;
+    fixtureDef.density = 0.00002f;
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
@@ -181,7 +191,8 @@ public class Play extends GameState {
       // removing fixture around human in order for them to disappear.
       // TODO: make this more interesting to watch maybe
       if (human != null) {
-        human.destroyFixture(human.getFixtureList().get(0));
+        human.applyForce(0f,5000f,0,0,true);
+        soundeffectWarp.play(0.5f);
       }
     }
   }
