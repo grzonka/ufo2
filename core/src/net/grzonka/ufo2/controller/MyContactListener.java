@@ -1,5 +1,6 @@
 package net.grzonka.ufo2.controller;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -10,12 +11,14 @@ public class MyContactListener implements ContactListener {
 
   private boolean humanSpotted = false;
 
+  Fixture fa;
+  Fixture fb;
   // called when two fixtures collide
   @Override
   public void beginContact(Contact c) {
 
-    Fixture fa = c.getFixtureA();
-    Fixture fb = c.getFixtureB();
+    fa = c.getFixtureA();
+    fb = c.getFixtureB();
 
     if (fa.getUserData() != null && fa.getUserData().equals("sensor") && fb.getUserData() != null
         && fb.getUserData().equals(
@@ -36,8 +39,8 @@ public class MyContactListener implements ContactListener {
   @Override
   public void endContact(Contact c) {
 
-    Fixture fa = c.getFixtureA();
-    Fixture fb = c.getFixtureB();
+    fa = c.getFixtureA();
+    fb = c.getFixtureB();
 
     if (fa.getUserData() != null && fa.getUserData().equals("sensor") && fb.getUserData() != null
         && fb.getUserData().equals(
@@ -58,6 +61,17 @@ public class MyContactListener implements ContactListener {
 
   public boolean isHumanSpotted() {
     return humanSpotted;
+  }
+
+  public Body getHuman(){
+    if (humanSpotted){
+      if (fa.getUserData().equals("human")){
+        return fa.getBody();
+      } else {
+        return fb.getBody();
+      }
+    }
+    return null;
   }
 
   @Override

@@ -176,7 +176,7 @@ public class Ufo2 extends ApplicationAdapter {
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
       if (ufoBody.getAngle() < 0.3) {
-        ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() + 0.1f);
+        //ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() + 0.1f);
         // TODO update print accordingly (or only print.)
       }
       //System.out.println(ufoBody.getAngle());
@@ -185,7 +185,7 @@ public class Ufo2 extends ApplicationAdapter {
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && vel.x < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
       if (ufoBody.getAngle() > -0.3) {
-        ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() - 0.1f);
+        //ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() - 0.1f);
         ufoRotation = ufoBody.getAngle();
         // TODO update print accordingly (or only print.)
         // angle has to applied to the sprite separately.
@@ -209,7 +209,8 @@ public class Ufo2 extends ApplicationAdapter {
 
     if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
       System.out.println("ZAP!!!");
-
+      customContactListener.getHuman().applyLinearImpulse(0, 2000f, pos.x, pos.y, true);
+      //boyBody.applyLinearImpulse(0, 500f, pos.x, pos.y, true);
     }
 
     batch.begin();
