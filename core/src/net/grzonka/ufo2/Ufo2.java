@@ -17,11 +17,15 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.FrictionJointDef;
+import com.badlogic.gdx.physics.box2d.joints.MotorJointDef;
 import com.badlogic.gdx.utils.Array;
+import net.grzonka.ufo2.controller.MyContactListener;
 
 public class Ufo2 extends ApplicationAdapter {
 
@@ -42,16 +46,22 @@ public class Ufo2 extends ApplicationAdapter {
   private Body ufoBody;
   private final float moveSpeed = 1.5f;
   private final float cameraSpeed = 1.5f;
+  private float ufoRotation = 0;
+
+  MyContactListener customContactListener;
 
 
   @Override
   public void create() {
+
+    customContactListener = new MyContactListener();
 
     // box2d initialisation
     Box2D.init();
     // this vector creates gravity for the world with -10 (m/s^2)
     // 1 Box2d unit = 1 meter.
     world = new World(new Vector2(0, -100), true);
+    world.setContactListener(customContactListener);
     // debug renderer for box2d
     debugRenderer = new Box2DDebugRenderer();
 
@@ -78,12 +88,16 @@ public class Ufo2 extends ApplicationAdapter {
     ufoShape.setAsBox(20, 7.5f);
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
-    /*ufoFixtureDef.density = 0.5f;
+    ufoFixtureDef.density = 0f;
     ufoFixtureDef.friction = 0.4f;
-    ufoFixtureDef.restitution = 0f;*/
+    ufoFixtureDef.restitution = 0.1f;
     ufoBody.setUserData(ufoSprite);
-    Fixture ufoFixture = ufoBody.createFixture(ufoFixtureDef);
+    ufoBody.createFixture(ufoFixtureDef).setUserData("player");
 
+    ufoShape.setAsBox(.5f, 30f, new Vector2(0, -30), 0);
+    ufoFixtureDef.shape = ufoShape;
+    ufoFixtureDef.isSensor = true;
+    ufoBody.createFixture(ufoFixtureDef).setUserData("sensor");
     ufoShape.dispose();
 
     // First we create a boyBody definition
@@ -111,7 +125,7 @@ public class Ufo2 extends ApplicationAdapter {
 
     // Create our fixture and attach it to the boyBody
     // necessary even tho return value is never used.
-    Fixture fixture = boyBody.createFixture(fixtureDef);
+    boyBody.createFixture(fixtureDef).setUserData("human");
 
     // Remember to dispose of any shapes after you are donw with them!
     // BodyDef and FixtureDef do not need disposing, but shapes do.
@@ -134,7 +148,15 @@ public class Ufo2 extends ApplicationAdapter {
     // Clean up after ourselves
     groundBox.dispose();
     //ufoBody.setLinearVelocity(0.0f, 1.0f);
-//ufoBody.applyForceToCenter(10f,0f,true);
+    //ufoBody.applyForceToCenter(10f,0f,true);
+
+    MotorJointDef jointDef = new MotorJointDef();
+    jointDef.angularOffset = 0f;
+    jointDef.collideConnected = true;
+    jointDef.correctionFactor = 0.5f;
+    jointDef.maxForce = 1f;
+    jointDef.maxTorque = 1f;
+    jointDef.initialize(boyBody, ufoBody);
   }
 
   // render() is called each frame. (can be thought of as an event loop)
@@ -153,11 +175,21 @@ public class Ufo2 extends ApplicationAdapter {
 // apply left impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
+      if (ufoBody.getAngle() < 0.3) {
+        ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() + 0.1f);
+        // TODO update print accordingly (or only print.)
+      }
+      //System.out.println(ufoBody.getAngle());
     }
 // apply right impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && vel.x < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
-
+      if (ufoBody.getAngle() > -0.3) {
+        ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() - 0.1f);
+        ufoRotation = ufoBody.getAngle();
+        // TODO update print accordingly (or only print.)
+        // angle has to applied to the sprite separately.
+      }
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP) && vel.y < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(0, moveSpeed, pos.x, pos.y, true);
@@ -175,34 +207,9 @@ public class Ufo2 extends ApplicationAdapter {
       camera.translate(1, 0, 0);
     }
 
-    /*System.out.println("Ufo at: " + pos.x + "    camera at: " + camera.position.x + "     speed: "
-        + vel);*/
+    if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
+      System.out.println("ZAP!!!");
 
-
-
-
-
-    /*if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-      // this would be manipulation of just the boySprite, we want to manipulate box2d objects
-      // instead.
-      // boySprite.translateX(-1f);
-      ufoBody.setTransform(ufoBody.getPosition().x - moveSpeed, ufoBody.getPosition().y, 0);
-
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-      ufoBody.setTransform(ufoBody.getPosition().x + moveSpeed, ufoBody.getPosition().y, 0);
-
-    }*/
-
-    /*if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-      ufoBody.setTransform(ufoBody.getPosition().x, ufoBody.getPosition().y + moveSpeed, 0);
-    }
-    if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-      ufoBody.setTransform(ufoBody.getPosition().x, ufoBody.getPosition().y - moveSpeed, 0);
-    }*/
-
-    if (Gdx.input.isKeyPressed(Keys.R)) {
-      boySprite.rotate(4f);
     }
 
     batch.begin();
@@ -230,6 +237,7 @@ public class Ufo2 extends ApplicationAdapter {
     if (e != null) {
       //System.out.println(e);
       e.setPosition(ufoBody.getPosition().x - 20f, ufoBody.getPosition().y - 7.5f);
+      e.setRotation(ufoBody.getAngle() * 30);
       e.draw(batch);
     }
 
@@ -244,6 +252,7 @@ public class Ufo2 extends ApplicationAdapter {
 
     backgroundSprite.draw(batch);
     boySprite.draw(batch);
+    //ufoSprite.setRotation(ufoBody.getAngle()*30);
     ufoSprite.draw(batch);
     batch.end();
 
