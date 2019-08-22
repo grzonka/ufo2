@@ -11,25 +11,22 @@ public abstract class GameState {
   protected Game game;
 
   protected SpriteBatch spriteBatch;
-  protected OrthographicCamera orthographicCamera;
+  protected OrthographicCamera camera;
 
   protected GameState(GameStateManager gsm){
     this.gameStateManager = gsm;
     game = gsm.getGame();
     spriteBatch = game.getSpriteBatch();
-    orthographicCamera = game.getCamera();
+    camera = game.getCamera();
   }
 
-  public void handleInput(){
-  }
+  public abstract void handleInput();
 
-  public void update(float dt){
-  }
 
-  public void render(){
-  }
+  public abstract void update(float dt);
 
-  public void dispose(){
-  }
+  public abstract void render();
+
+  public abstract void dispose();
 
 }

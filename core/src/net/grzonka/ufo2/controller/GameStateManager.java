@@ -21,7 +21,7 @@ public class GameStateManager {
   public Game getGame(){return game;}
 
   public void update(float dt) {
-
+    gameStates.peek().update(dt);
   }
 
   public void render() {

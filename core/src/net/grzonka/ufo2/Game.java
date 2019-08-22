@@ -26,8 +26,17 @@ import net.grzonka.ufo2.controller.MyContactListener;
 
 public class Game extends ApplicationAdapter {
 
-  private static final float MAX_VELOCITY = 70;
+  public static final String TITLE = "Ufo2";
+  public static final int V_WIDTH = 160;
+  public static final int V_HEIGHT = 144;
+
   private SpriteBatch spriteBatch;
+  private OrthographicCamera camera;
+
+
+  // old code below
+  private static final float MAX_VELOCITY = 70;
+
   private Texture background;
   private Texture smallBoyTexture;
   private Texture ufoTexture;
@@ -37,13 +46,12 @@ public class Game extends ApplicationAdapter {
   public static final float STEP = 1/60f;
   private float timeAccum;
 
-  public static final int V_WIDTH = 160;
-  public static final int V_HEIGHT = 144;
+
 
   private Sprite boySprite;
   private Sprite ufoSprite;
   private Sprite backgroundSprite;
-  private OrthographicCamera camera;
+
   private World world;
   private Box2DDebugRenderer debugRenderer;
   private Body boyBody;
@@ -68,6 +76,11 @@ public class Game extends ApplicationAdapter {
   @Override
   public void create() {
 
+    spriteBatch = new SpriteBatch();
+    camera = new OrthographicCamera(160, 144);
+    camera.translate(80f, 72f, 0f);
+
+
     gameStateManager = new GameStateManager(this);
 
     // TODO: clean up this mess and structure it into different classes/packages.
@@ -83,17 +96,16 @@ public class Game extends ApplicationAdapter {
     // debug renderer for box2d
     debugRenderer = new Box2DDebugRenderer();*/
 
-    spriteBatch = new SpriteBatch();
-    background = new Texture(Gdx.files.internal("background_10_wide.png"));
+    //background = new Texture(Gdx.files.internal("background_10_wide.png"));
     /*smallBoyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
     ufoTexture = new Texture(Gdx.files.internal("ufo_transparent_0_zap.png")); // 0 - 6 are zap
     // intensites going from none to full zap
     backgroundSprite = new Sprite(background);
     boySprite = new Sprite(smallBoyTexture);*/
     //ufoSprite = new Sprite(ufoTexture);
-    camera = new OrthographicCamera(160, 144);
+    //camera = new OrthographicCamera(160, 144);
     // moves camera to be centered that the beginning of the background is in place
-    camera.translate(80f, 72f, 0f);
+    //camera.translate(80f, 72f, 0f);
 
     /*BodyDef UfoBodyDef = new BodyDef();
     UfoBodyDef.type = BodyType.DynamicBody;
@@ -326,9 +338,6 @@ public class Game extends ApplicationAdapter {
 
   @Override
   public void dispose() {
-    spriteBatch.dispose();
-    background.dispose();
-    smallBoyTexture.dispose();
-    ufoTexture.dispose();
+    //gameStateManager.dispose
   }
 }
