@@ -29,7 +29,7 @@ import net.grzonka.ufo2.controller.MyContactListener;
 
 public class Ufo2 extends ApplicationAdapter {
 
-  private static final float MAX_VELOCITY = 100;
+  private static final float MAX_VELOCITY = 70;
   private SpriteBatch batch;
   private Texture background;
   private Texture smallBoyTexture;
@@ -43,6 +43,9 @@ public class Ufo2 extends ApplicationAdapter {
   private Box2DDebugRenderer debugRenderer;
   private Body boyBody;
   private Body groundBody;
+  private Body heavenBody;
+  private Body startBody;
+  private Body endBody;
   private Body ufoBody;
   private final float moveSpeed = 1.5f;
   private final float cameraSpeed = 1.5f;
@@ -132,21 +135,33 @@ public class Ufo2 extends ApplicationAdapter {
     /*circle.dispose();*/
     polyShape.dispose();
 
-    // Creating static boyBody.
-    BodyDef groundBodyDef = new BodyDef();
+    // Creating static Body.
+    BodyDef topBottomBodyDef = new BodyDef();
+    BodyDef startEndBodyDef = new BodyDef();
     // Set its world position
-    groundBodyDef.position.set(new Vector2(0, 1));
-    // Create a boyBody from the defintion and add it to the world
-    groundBody = world.createBody(groundBodyDef);
+    startEndBodyDef.position.set(-0.5f,80);
+    topBottomBodyDef.position.set(new Vector2(1000, -0.5f));
+    // Create a Body from the defintion and add it to the world
+    groundBody = world.createBody(topBottomBodyDef);
+    startBody = world.createBody(startEndBodyDef);
+    topBottomBodyDef.position.set(new Vector2(1000, 144.5f));
+    startEndBodyDef.position.set(1600.5f,80);
+    heavenBody = world.createBody(topBottomBodyDef);
+    endBody = world.createBody(startEndBodyDef);
     // Create a polygon shape
-    PolygonShape groundBox = new PolygonShape();
+    PolygonShape topBottomBox = new PolygonShape();
+    PolygonShape startEndBox = new PolygonShape();
     // Set the polygon shape as a box which is twice the size of our view port and 20 high
     // (setAsBox takes half-width and half-height as arguments)
-    groundBox.setAsBox(camera.viewportWidth, 1.0f);
+    topBottomBox.setAsBox(1000, 1.0f);
+    startEndBox.setAsBox(1,144);
     // Create a fixture from our polygon shape and add it to our ground boyBody
-    groundBody.createFixture(groundBox, 0.0f);
+    groundBody.createFixture(topBottomBox, 0.0f);
+    heavenBody.createFixture(topBottomBox, 0.0f);
+    startBody.createFixture(startEndBox,0.0f);
+    endBody.createFixture(startEndBox, 0.0f);
     // Clean up after ourselves
-    groundBox.dispose();
+    topBottomBox.dispose();
     //ufoBody.setLinearVelocity(0.0f, 1.0f);
     //ufoBody.applyForceToCenter(10f,0f,true);
 
@@ -199,18 +214,29 @@ public class Ufo2 extends ApplicationAdapter {
     }
     // System.out.println(ufoBody.getPosition().x   + "     " + pos.x);
     //System.out.println(pos.x);
-    if (pos.x < camera.position.x - 50) {
+    if (pos.x < camera.position.x - 50 && camera.position.x > 80) {
       camera.translate(-1, 0, 0);
     }
 
-    if (pos.x > camera.position.x + 50) {
+    if (pos.x > camera.position.x + 50 && camera.position.x < 1520) {
       camera.translate(1, 0, 0);
     }
 
     if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
       System.out.println("ZAP!!!");
-      customContactListener.getHuman().applyLinearImpulse(0, 2000f, pos.x, pos.y, true);
+
+      Body human = customContactListener.getHuman();
+
+      //customContactListener.getHuman().applyLinearImpulse(0, 2000f, pos.x, pos.y, true);
       //boyBody.applyLinearImpulse(0, 500f, pos.x, pos.y, true);
+      Array<Fixture> humanFixtures = new Array<>();
+      humanFixtures = human.getFixtureList();
+      //world.destroyBody(customContactListener.getHuman());
+      for (Fixture f :humanFixtures){
+        human.destroyFixture(f);
+      }
+
+
     }
 
     batch.begin();

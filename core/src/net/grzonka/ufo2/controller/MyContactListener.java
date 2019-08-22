@@ -13,6 +13,7 @@ public class MyContactListener implements ContactListener {
 
   Fixture fa;
   Fixture fb;
+
   // called when two fixtures collide
   @Override
   public void beginContact(Contact c) {
@@ -63,9 +64,9 @@ public class MyContactListener implements ContactListener {
     return humanSpotted;
   }
 
-  public Body getHuman(){
-    if (humanSpotted){
-      if (fa.getUserData().equals("human")){
+  public Body getHuman() {
+    if (humanSpotted) {
+      if (fa.getUserData().equals("human")) {
         return fa.getBody();
       } else {
         return fb.getBody();
