@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -17,12 +16,9 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.FrictionJointDef;
 import com.badlogic.gdx.physics.box2d.joints.MotorJointDef;
 import com.badlogic.gdx.utils.Array;
 import net.grzonka.ufo2.controller.MyContactListener;
@@ -51,7 +47,7 @@ public class Ufo2 extends ApplicationAdapter {
   private final float cameraSpeed = 1.5f;
   private float ufoRotation = 0;
 
-  MyContactListener customContactListener;
+  private MyContactListener customContactListener;
 
 
   @Override
@@ -139,13 +135,13 @@ public class Ufo2 extends ApplicationAdapter {
     BodyDef topBottomBodyDef = new BodyDef();
     BodyDef startEndBodyDef = new BodyDef();
     // Set its world position
-    startEndBodyDef.position.set(-0.5f,80);
+    startEndBodyDef.position.set(-0.5f, 80);
     topBottomBodyDef.position.set(new Vector2(1000, -0.5f));
     // Create a Body from the defintion and add it to the world
     groundBody = world.createBody(topBottomBodyDef);
     startBody = world.createBody(startEndBodyDef);
     topBottomBodyDef.position.set(new Vector2(1000, 144.5f));
-    startEndBodyDef.position.set(1600.5f,80);
+    startEndBodyDef.position.set(1600.5f, 80);
     heavenBody = world.createBody(topBottomBodyDef);
     endBody = world.createBody(startEndBodyDef);
     // Create a polygon shape
@@ -154,11 +150,11 @@ public class Ufo2 extends ApplicationAdapter {
     // Set the polygon shape as a box which is twice the size of our view port and 20 high
     // (setAsBox takes half-width and half-height as arguments)
     topBottomBox.setAsBox(1000, 1.0f);
-    startEndBox.setAsBox(1,144);
+    startEndBox.setAsBox(1, 144);
     // Create a fixture from our polygon shape and add it to our ground boyBody
     groundBody.createFixture(topBottomBox, 0.0f);
     heavenBody.createFixture(topBottomBox, 0.0f);
-    startBody.createFixture(startEndBox,0.0f);
+    startBody.createFixture(startEndBox, 0.0f);
     endBody.createFixture(startEndBox, 0.0f);
     // Clean up after ourselves
     topBottomBox.dispose();
@@ -187,23 +183,31 @@ public class Ufo2 extends ApplicationAdapter {
     Vector2 pos = ufoBody.getPosition();
     // this permanent force resists gravity.
     ufoBody.applyForceToCenter(0f, 100f, true);
-// apply left impulse, but only if max velocity is not reached yet
+    // apply left impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
-      if (ufoBody.getAngle() < 0.3) {
+      /*if (ufoBody.getAngle() < 0.3) {
         //ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() + 0.1f);
-        // TODO update print accordingly (or only print.)
+        // TODO: decide whether or not rotation of ufoBody is that useful or if rotation should only
+        //  be applied to sprite.
+      }*/
+      if (ufoRotation < 0.3) {
+        ufoRotation += 0.1f;
       }
+
       //System.out.println(ufoBody.getAngle());
     }
-// apply right impulse, but only if max velocity is not reached yet
+    // apply right impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && vel.x < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
-      if (ufoBody.getAngle() > -0.3) {
-        //ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() - 0.1f);
-        ufoRotation = ufoBody.getAngle();
-        // TODO update print accordingly (or only print.)
-        // angle has to applied to the sprite separately.
+      /*if (ufoBody.getAngle() > -0.3) {
+        // ufoBody.setTransform(pos.x, pos.y, ufoBody.getAngle() - 0.1f);
+
+        // TODO: decide whether or not rotation of ufoBody is that useful or if rotation should only
+        //  be applied to sprite.
+      }*/
+      if (ufoRotation > -0.3) {
+        ufoRotation -= 0.1f;
       }
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP) && vel.y < MAX_VELOCITY) {
@@ -212,12 +216,9 @@ public class Ufo2 extends ApplicationAdapter {
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
-    // System.out.println(ufoBody.getPosition().x   + "     " + pos.x);
-    //System.out.println(pos.x);
     if (pos.x < camera.position.x - 50 && camera.position.x > 80) {
       camera.translate(-1, 0, 0);
     }
-
     if (pos.x > camera.position.x + 50 && camera.position.x < 1520) {
       camera.translate(1, 0, 0);
     }
@@ -227,18 +228,15 @@ public class Ufo2 extends ApplicationAdapter {
 
       Body human = customContactListener.getHuman();
 
-      //customContactListener.getHuman().applyLinearImpulse(0, 2000f, pos.x, pos.y, true);
-      //boyBody.applyLinearImpulse(0, 500f, pos.x, pos.y, true);
-      Array<Fixture> humanFixtures = new Array<>();
-      humanFixtures = human.getFixtureList();
-      //world.destroyBody(customContactListener.getHuman());
-      for (Fixture f :humanFixtures){
-        human.destroyFixture(f);
+      // removing fixture around human in order for them to disappear.
+      // TODO: make this more interesting to watch maybe
+      if (human != null) {
+        human.destroyFixture(human.getFixtureList().get(0));
       }
-
 
     }
 
+    // starts libgdx rendering queue.
     batch.begin();
 
     // This will render all humans correctly
@@ -264,7 +262,7 @@ public class Ufo2 extends ApplicationAdapter {
     if (e != null) {
       //System.out.println(e);
       e.setPosition(ufoBody.getPosition().x - 20f, ufoBody.getPosition().y - 7.5f);
-      e.setRotation(ufoBody.getAngle() * 30);
+      e.setRotation(ufoRotation * 30);
       e.draw(batch);
     }
 
