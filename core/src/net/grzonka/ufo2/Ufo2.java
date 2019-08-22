@@ -53,6 +53,8 @@ public class Ufo2 extends ApplicationAdapter {
   @Override
   public void create() {
 
+    // TODO: clean up this mess and structure it into different classes/packages.
+
     customContactListener = new MyContactListener();
 
     // box2d initialisation
@@ -274,6 +276,9 @@ public class Ufo2 extends ApplicationAdapter {
     // continous update not bound to movement yet, just a sidescroller for now
     // camera.translate(0.03f,0f,0f);
     camera.update();
+
+    // TODO: add procedural world generation. easy solution seems to be random int (1..3) for
+    //  length combined with random height for box (1/n) of height where n (2..8) or so.
 
     backgroundSprite.draw(batch);
     boySprite.draw(batch);
