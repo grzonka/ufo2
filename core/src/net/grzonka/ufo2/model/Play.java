@@ -56,6 +56,7 @@ public class Play extends GameState {
   final float moveSpeed = 1.5f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
+  private int srcX;
 
 
   public Play(GameStateManager gsm) {
@@ -63,6 +64,7 @@ public class Play extends GameState {
     customContactListener = new MyContactListener();
 
     background = new Texture(Gdx.files.internal("background_10_wide.png"));
+    background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     backgroundSprite = new Sprite(background);
 
     world = new World(B2DVars.GRAVITY, true); // Vector2 creates gravity
@@ -103,7 +105,7 @@ public class Play extends GameState {
     startEndBodyDef.position.set(-0.5f / PPM, 80 / PPM);
     Body startBody = world.createBody(startEndBodyDef);
     startEndBodyDef.position.set(1600.5f / PPM, 80 / PPM);
-    Body endBody = world.createBody(startEndBodyDef);
+    //Body endBody = world.createBody(startEndBodyDef);
 
     PolygonShape startEndBox = new PolygonShape();
     startEndBox.setAsBox(1 / PPM, 144 / PPM);
@@ -115,7 +117,7 @@ public class Play extends GameState {
     startEndFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
     startEndFixtureDef.filter.maskBits = BIT_HUMAN | BIT_UFO;
     startBody.createFixture(startEndFixtureDef).setUserData("border");
-    endBody.createFixture(startEndFixtureDef).setUserData("border");
+    //endBody.createFixture(startEndFixtureDef).setUserData("border");
     startEndBox.dispose();
 
     // creating ufo
@@ -205,7 +207,7 @@ public class Play extends GameState {
     if (pos.x < camera.position.x - (50/PPM) && camera.position.x > 80/PPM) {
       camera.translate(-1, 0, 0);
     }
-    if (pos.x > camera.position.x + 50/PPM && camera.position.x < 1520/PPM) {
+    if (pos.x > camera.position.x + 50/PPM /*&& camera.position.x < 1520/PPM*/) {
       camera.translate(1, 0, 0);
     }
     camera.update();
@@ -259,7 +261,10 @@ public class Play extends GameState {
       e.draw(spriteBatch);
     }
 
-    backgroundSprite.draw(spriteBatch);
+    //backgroundSprite.draw(spriteBatch);
+    
+    spriteBatch.draw(background,0,0,srcX,0,Game.V_WIDTH,Game.V_HEIGHT);
+    srcX += 1;
     boySprite.draw(spriteBatch);
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
