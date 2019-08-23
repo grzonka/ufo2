@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import java.util.Random;
 
 public class TheCreator {
 
@@ -46,16 +47,19 @@ public class TheCreator {
     return boyBody;
   }
 
-  public Body createKinematicBox(World world){
+  public Body createKinematicBox(World world, int height) {
 
     // first top and bottom boundaries
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.KinematicBody;
-    bodyDef.position.set(new Vector2(100 / PPM, 5f / PPM));
+    // spawn location
+    bodyDef.position.set(new Vector2(140 / PPM, 1f / PPM));
     Body bottomBody = world.createBody(bodyDef);
 
     PolygonShape bodyBox = new PolygonShape();
-    bodyBox.setAsBox(50 / PPM, 1.0f / PPM);
+    Random randomGen = new Random();
+    int randomHeight = randomGen.nextInt(5) + 1;// generates 1-5
+    bodyBox.setAsBox(20 / PPM, randomHeight * 15 / PPM); // should be of height 10,20,30,40 or 50.
     FixtureDef topBottomFixtureDef = new FixtureDef();
     topBottomFixtureDef.shape = bodyBox;
     topBottomFixtureDef.density = 0f;
@@ -65,7 +69,7 @@ public class TheCreator {
     topBottomFixtureDef.filter.maskBits = BIT_HUMAN;
     bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
     bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
-    bottomBody.setLinearVelocity(-8,0);
+    bottomBody.setLinearVelocity(-8, 0);
     bodyBox.dispose();
 
     return bottomBody;

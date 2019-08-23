@@ -247,9 +247,11 @@ public class Play extends GameState {
 
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
+    if (srcX % 30 == 0) {
+      dummyBodies.add(theCreator.createKinematicBox(world, 3));
+    }
     if (srcX % 90 == 0) {
       dummyBodies.add(theCreator.createHuman(100, 100, world));
-      dummyBodies.add(theCreator.createKinematicBox(world));
     }
 
     // rendering humans
