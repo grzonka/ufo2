@@ -104,8 +104,8 @@ public class Play extends GameState {
     startEndBodyDef.type = BodyType.StaticBody;
     startEndBodyDef.position.set(-0.5f / PPM, 80 / PPM);
     Body startBody = world.createBody(startEndBodyDef);
-    startEndBodyDef.position.set(1600.5f / PPM, 80 / PPM);
-    //Body endBody = world.createBody(startEndBodyDef);
+    startEndBodyDef.position.set(160.5f / PPM, 80 / PPM);
+    Body endBody = world.createBody(startEndBodyDef);
 
     PolygonShape startEndBox = new PolygonShape();
     startEndBox.setAsBox(1 / PPM, 144 / PPM);
@@ -117,7 +117,7 @@ public class Play extends GameState {
     startEndFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
     startEndFixtureDef.filter.maskBits = BIT_HUMAN | BIT_UFO;
     startBody.createFixture(startEndFixtureDef).setUserData("border");
-    //endBody.createFixture(startEndFixtureDef).setUserData("border");
+    endBody.createFixture(startEndFixtureDef).setUserData("border");
     startEndBox.dispose();
 
     // creating ufo
@@ -204,14 +204,14 @@ public class Play extends GameState {
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
-    if (pos.x < camera.position.x - (50/PPM) && camera.position.x > 80/PPM) {
+    /*if (pos.x < camera.position.x - (50/PPM) && camera.position.x > 80/PPM) {
       camera.translate(-1, 0, 0);
     }
-    if (pos.x > camera.position.x + 50/PPM /*&& camera.position.x < 1520/PPM*/) {
+    if (pos.x > camera.position.x + 50/PPM && camera.position.x < 1520/PPM) {
       camera.translate(1, 0, 0);
     }
     camera.update();
-
+    */
     if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
       System.out.println("ZAP!!!");
       Body human = customContactListener.getHuman();
