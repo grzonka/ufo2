@@ -3,7 +3,6 @@ package net.grzonka.ufo2.model;
 import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
 import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
-import static net.grzonka.ufo2.model.B2DVars.BIT_UFO_LASER;
 import static net.grzonka.ufo2.model.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
@@ -15,8 +14,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.glutils.MipMapGenerator;
-import com.badlogic.gdx.graphics.glutils.MipMapTextureData;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -47,6 +44,8 @@ public class Play extends GameState {
   private Texture boyTexture;
   private Sprite boySprite;
   private Body boyBody;
+
+  private HumanMachine humanMachine;
 
   private Sound soundEffectWarp;
   private final Sound soundEffectTheme;
@@ -156,8 +155,9 @@ public class Play extends GameState {
     ufoBody.createFixture(ufoFixtureDef).setUserData("sensor");
     ufoShape.dispose();
 
+    humanMachine = new HumanMachine();
     // creating smallBoy
-    boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
+    /*boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
     boySprite = new Sprite(boyTexture);
     boySprite.setScale(0.1f);
 
@@ -177,7 +177,7 @@ public class Play extends GameState {
     fixtureDef.filter.maskBits = BIT_BORDER | BIT_UFO_LASER;
     boyBody.setUserData(boySprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
-    boyShape.dispose();
+    boyShape.dispose();*/
 
     // setting up camera
     camera = new OrthographicCamera();
@@ -239,17 +239,22 @@ public class Play extends GameState {
 
   public void render() {
     // clearing screen first
-
+    Array<Body> dummyBodies = new Array<>();
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     spriteBatch.setProjectionMatrix(camera.combined);
 
     spriteBatch.begin();
 
-    // TODO: rescale Sprites/Textures so that they fit in new world.
+    spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
+    srcX += 1;
+    if (srcX % 90 == 0) {
+      dummyBodies.add(humanMachine.createHuman(100, 100, world));
+      //dummyBodies.add(humanMachine.createHuman(40, 100, world));
 
+    }
     // rendering humans
-    Array<Body> dummyBodies = new Array<>();
-    dummyBodies.add(boyBody);
+
+    //dummyBodies.add(boyBody);
     world.getBodies(dummyBodies);
     for (Body b : dummyBodies) {
       Sprite e = (Sprite) b.getUserData();
@@ -266,13 +271,13 @@ public class Play extends GameState {
       e.setRotation(ufoRotation * 30);
       e.draw(spriteBatch);
     }
-
-    //backgroundSprite.draw(spriteBatch);
-
-
-    spriteBatch.draw(background,0,0,160,15,srcX,0,1600,144,false,false);
-    srcX += 1.3;
-    boySprite.draw(spriteBatch);
+    for (Body b : dummyBodies) {
+      Sprite temp = (Sprite) b.getUserData();
+      if (temp != null) {
+        //temp.draw(spriteBatch);
+      }
+    }
+    //boySprite.draw(spriteBatch);
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
     debugRenderer.render(world, camera.combined);
