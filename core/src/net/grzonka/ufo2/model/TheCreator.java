@@ -1,12 +1,15 @@
 package net.grzonka.ufo2.model;
 
 import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
+import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
+import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO_LASER;
 import static net.grzonka.ufo2.model.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -14,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class HumanMachine {
+public class TheCreator {
 
   public Body createHuman(int xPixel, int yPixel, World world) {
 
@@ -41,8 +44,31 @@ public class HumanMachine {
     boyShape.dispose();
 
     return boyBody;
+  }
 
+  public Body createKinematicBox(World world){
 
+    // first top and bottom boundaries
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyType.KinematicBody;
+    bodyDef.position.set(new Vector2(100 / PPM, 5f / PPM));
+    Body bottomBody = world.createBody(bodyDef);
+
+    PolygonShape bodyBox = new PolygonShape();
+    bodyBox.setAsBox(50 / PPM, 1.0f / PPM);
+    FixtureDef topBottomFixtureDef = new FixtureDef();
+    topBottomFixtureDef.shape = bodyBox;
+    topBottomFixtureDef.density = 0f;
+    topBottomFixtureDef.friction = 1f;
+    topBottomFixtureDef.restitution = 0;
+    topBottomFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
+    topBottomFixtureDef.filter.maskBits = BIT_HUMAN;
+    bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
+    bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
+    bottomBody.setLinearVelocity(-8,0);
+    bodyBox.dispose();
+
+    return bottomBody;
   }
 
 }

@@ -45,7 +45,7 @@ public class Play extends GameState {
   private Sprite boySprite;
   private Body boyBody;
 
-  private HumanMachine humanMachine;
+  private TheCreator theCreator;
 
   private Sound soundEffectWarp;
   private final Sound soundEffectTheme;
@@ -155,7 +155,7 @@ public class Play extends GameState {
     ufoBody.createFixture(ufoFixtureDef).setUserData("sensor");
     ufoShape.dispose();
 
-    humanMachine = new HumanMachine();
+    theCreator = new TheCreator();
     // creating smallBoy
     /*boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
     boySprite = new Sprite(boyTexture);
@@ -248,13 +248,11 @@ public class Play extends GameState {
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
     if (srcX % 90 == 0) {
-      dummyBodies.add(humanMachine.createHuman(100, 100, world));
-      //dummyBodies.add(humanMachine.createHuman(40, 100, world));
-
+      dummyBodies.add(theCreator.createHuman(100, 100, world));
+      dummyBodies.add(theCreator.createKinematicBox(world));
     }
-    // rendering humans
 
-    //dummyBodies.add(boyBody);
+    // rendering humans
     world.getBodies(dummyBodies);
     for (Body b : dummyBodies) {
       Sprite e = (Sprite) b.getUserData();
