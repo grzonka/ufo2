@@ -1,5 +1,7 @@
 package net.grzonka.ufo2.model;
 
+import static net.grzonka.ufo2.model.B2DVars.PPM;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -24,7 +26,7 @@ import net.grzonka.ufo2.controller.MyContactListener;
 public class Play extends GameState {
 
 
-    private World world;
+  private World world;
   private MyContactListener customContactListener;
   private Box2DDebugRenderer debugRenderer;
 
@@ -39,8 +41,8 @@ public class Play extends GameState {
   private Sprite boySprite;
   private Body boyBody;
 
-  private Sound soundeffectWarp;
-  private final Sound soundeffectTheme;
+  private Sound soundEffectWarp;
+  private final Sound soundEffectTheme;
 
   private OrthographicCamera camera;
 
@@ -59,13 +61,13 @@ public class Play extends GameState {
     background = new Texture(Gdx.files.internal("background_10_wide.png"));
     backgroundSprite = new Sprite(background);
 
-    world = new World(new Vector2(0, -10f), true);
+    world = new World(B2DVars.GRAVITY, true); // Vector2 creates gravity
     world.setContactListener(customContactListener);
 
-   soundeffectWarp = Gdx.audio.newSound(Gdx.files.internal("sound/warp.ogg"));
-   soundeffectTheme = Gdx.audio.newSound(Gdx.files.internal("sound/theme.ogg"));
+    soundEffectWarp = Gdx.audio.newSound(Gdx.files.internal("sound/warp.ogg"));
+    soundEffectTheme = Gdx.audio.newSound(Gdx.files.internal("sound/theme.ogg"));
 
-   soundeffectTheme.loop(1f);
+    soundEffectTheme.loop(1f);
 
     debugRenderer = new Box2DDebugRenderer();
 
@@ -73,13 +75,13 @@ public class Play extends GameState {
     // first top and bottom boundaries
     BodyDef topBottomBodyDef = new BodyDef();
     topBottomBodyDef.type = BodyType.StaticBody;
-    topBottomBodyDef.position.set(new Vector2(1000, 144.5f));
+    topBottomBodyDef.position.set(new Vector2(1000 / PPM, 144.5f / PPM));
     Body topBody = world.createBody(topBottomBodyDef);
-    topBottomBodyDef.position.set(new Vector2(1000, -0.5f));
+    topBottomBodyDef.position.set(new Vector2(1000 / PPM, -0.5f / PPM));
     Body bottomBody = world.createBody(topBottomBodyDef);
 
     PolygonShape topBottomBox = new PolygonShape();
-    topBottomBox.setAsBox(1000, 1.0f);
+    topBottomBox.setAsBox(1000 / PPM, 1.0f / PPM);
     topBody.createFixture(topBottomBox, 0.0f);
     bottomBody.createFixture(topBottomBox, 0.0f);
     topBottomBox.dispose();
@@ -87,13 +89,13 @@ public class Play extends GameState {
     // creating start and end boundaries
     BodyDef startEndBodyDef = new BodyDef();
     startEndBodyDef.type = BodyType.StaticBody;
-    startEndBodyDef.position.set(-0.5f, 80);
+    startEndBodyDef.position.set(-0.5f / PPM, 80 / PPM);
     Body startBody = world.createBody(startEndBodyDef);
-    startEndBodyDef.position.set(1600.5f, 80);
+    startEndBodyDef.position.set(1600.5f / PPM, 80 / PPM);
     Body endBody = world.createBody(startEndBodyDef);
 
     PolygonShape startEndBox = new PolygonShape();
-    startEndBox.setAsBox(1, 144);
+    startEndBox.setAsBox(1 / PPM, 144 / PPM);
     startBody.createFixture(startEndBox, 0.0f);
     endBody.createFixture(startEndBox, 0.0f);
     startEndBox.dispose();
@@ -104,21 +106,22 @@ public class Play extends GameState {
 
     BodyDef UfoBodyDef = new BodyDef();
     UfoBodyDef.type = BodyType.DynamicBody;
-    UfoBodyDef.position.set(60, 120);
+    UfoBodyDef.position.set(60 / PPM, 120 / PPM);
     ufoBody = world.createBody(UfoBodyDef);
 
     PolygonShape ufoShape = new PolygonShape();
-    ufoShape.setAsBox(20, 7.5f);
+    ufoShape.setAsBox(20 / PPM, 7.5f / PPM); // ufo size in meter: (20*7.5) = 150m^2
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
-    ufoFixtureDef.density = 0f;
+    ufoFixtureDef.density = 0f; // ufo density (kg/m^2)
+    // results in ufo mass = 150kg (affected by gravity with -10m/s^2)
     ufoFixtureDef.friction = 0.4f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
     ufoBody.setUserData(ufoSprite);
     ufoBody.createFixture(ufoFixtureDef).setUserData("player");
 
-    ufoShape.setAsBox(.5f, 30f, new Vector2(0, -30), 0);
+    ufoShape.setAsBox(.5f / PPM, 30f / PPM, new Vector2(0 / PPM, -30 / PPM), 0);
     ufoFixtureDef.shape = ufoShape;
     ufoFixtureDef.isSensor = true;
     // maybe need to insert filter with human here to get this sorted.
@@ -131,14 +134,14 @@ public class Play extends GameState {
 
     BodyDef boyBodyDef = new BodyDef();
     boyBodyDef.type = BodyType.DynamicBody;
-    boyBodyDef.position.set(100, 100);
+    boyBodyDef.position.set(100 / PPM, 100 / PPM);
     boyBody = world.createBody(boyBodyDef);
 
     PolygonShape boyShape = new PolygonShape();
-    boyShape.setAsBox(8, 9.5f); // for some reason 1 unit here = 2px
+    boyShape.setAsBox(8 / PPM, 9.5f / PPM); // for some reason 1 unit here = 2px
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = boyShape;
-    fixtureDef.density = 0.00002f;
+    fixtureDef.density = 0.00002f; // human density
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
@@ -148,7 +151,7 @@ public class Play extends GameState {
 
     // setting up camera
     camera = new OrthographicCamera();
-    camera.setToOrtho(false, Game.V_WIDTH, Game.V_HEIGHT);
+    camera.setToOrtho(false, Game.V_WIDTH / PPM, Game.V_HEIGHT / PPM);
 
   }
 
@@ -177,10 +180,10 @@ public class Play extends GameState {
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
-    if (pos.x < camera.position.x - 50 && camera.position.x > 80) {
+    if (pos.x < camera.position.x - (50/PPM) && camera.position.x > 80/PPM) {
       camera.translate(-1, 0, 0);
     }
-    if (pos.x > camera.position.x + 50 && camera.position.x < 1520) {
+    if (pos.x > camera.position.x + 50/PPM && camera.position.x < 1520/PPM) {
       camera.translate(1, 0, 0);
     }
     camera.update();
@@ -191,8 +194,8 @@ public class Play extends GameState {
       // removing fixture around human in order for them to disappear.
       // TODO: make this more interesting to watch maybe
       if (human != null) {
-        human.applyForce(0f,5000f,0,0,true);
-        soundeffectWarp.play(0.5f);
+        human.applyForce(0f, 5000f, 0, 0, true);
+        soundEffectWarp.play(0.5f);
       }
     }
   }
@@ -200,7 +203,6 @@ public class Play extends GameState {
   public void update(float dt) {
 
     handleInput();
-
     world.step(dt, 8, 3);
 
   }
