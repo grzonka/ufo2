@@ -3,7 +3,6 @@ package net.grzonka.ufo2.controller;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import java.awt.TextField;
 import java.util.HashMap;
 
 public class Content {
@@ -16,7 +15,7 @@ public class Content {
     sounds = new HashMap<>();
   }
 
-  // texture handeling
+  // texture handling
   public void loadTexture(String path, String key) {
     Texture tempTexture = new Texture(Gdx.files.internal(path));
     textures.put(key, tempTexture);
@@ -34,7 +33,7 @@ public class Content {
   }
 
 
-  // sound hadeling
+  // sound handling
   public void loadSound(String path, String key) {
     Sound tempSound = Gdx.audio.newSound(Gdx.files.internal(path));
     sounds.put(key, tempSound);

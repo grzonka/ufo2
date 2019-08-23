@@ -215,6 +215,8 @@ public class Play extends GameState {
 
     spriteBatch.begin();
 
+    // TODO: rescale Sprites/Textures so that they fit in new world.
+
     // rendering humans
     Array<Body> dummyBodies = new Array<>();
     dummyBodies.add(boyBody);
@@ -230,7 +232,6 @@ public class Play extends GameState {
     // rendering ufo
     Sprite e = (Sprite) ufoBody.getUserData();
     if (e != null) {
-      //System.out.println(e);
       e.setPosition(ufoBody.getPosition().x - 20f, ufoBody.getPosition().y - 7.5f);
       e.setRotation(ufoRotation * 30);
       e.draw(spriteBatch);
