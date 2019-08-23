@@ -3,6 +3,8 @@ package net.grzonka.ufo2;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import net.grzonka.ufo2.controller.Content;
@@ -14,6 +16,10 @@ public class Game extends ApplicationAdapter {
   public static final int V_WIDTH = 160;
   public static final int V_HEIGHT = 144;
   public static final int SCALE = 1;
+
+  private int score;
+  private String scoreDiplayed;
+  BitmapFont scoreFont;
 
   private SpriteBatch spriteBatch;
   private OrthographicCamera camera;
@@ -38,6 +44,10 @@ public class Game extends ApplicationAdapter {
 
     resources = new Content();
 
+    score = 0;
+    scoreDiplayed = "0";
+    scoreFont = new BitmapFont();
+
     spriteBatch = new SpriteBatch();
     camera = new OrthographicCamera(V_WIDTH, V_HEIGHT);
     camera.translate(80f, 72f, 0f);
@@ -52,12 +62,22 @@ public class Game extends ApplicationAdapter {
   @Override
   public void render() {
 
+
+
     timeAccum += Gdx.graphics.getDeltaTime();
     while (timeAccum >= STEP) {
       timeAccum -= STEP;
       gameStateManager.update(STEP);
       gameStateManager.render();
+
+
     }
+    spriteBatch.begin();
+    scoreFont.setColor(0f, 0f, 0f, 1f);
+    scoreFont.getData().setScale(0.06f);
+
+    scoreFont.draw(spriteBatch,scoreDiplayed,0.5f,14);
+    spriteBatch.end();
   }
 
   @Override
