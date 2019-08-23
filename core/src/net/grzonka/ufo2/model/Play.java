@@ -13,7 +13,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.MipMapGenerator;
+import com.badlogic.gdx.graphics.glutils.MipMapTextureData;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -63,7 +66,8 @@ public class Play extends GameState {
     super(gsm);
     customContactListener = new MyContactListener();
 
-    background = new Texture(Gdx.files.internal("background_10_wide.png"));
+    background = new Texture(Gdx.files.internal("background_10_wide.png"), true);
+    background.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.MipMapLinearLinear);
     background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     backgroundSprite = new Sprite(background);
 
@@ -123,6 +127,7 @@ public class Play extends GameState {
     // creating ufo
     ufoTexture = new Texture(Gdx.files.internal("ufo_transparent_0_zap.png")); // 0 - 6 are zap
     ufoSprite = new Sprite(ufoTexture);
+    ufoSprite.setScale(0.1f);
 
     BodyDef UfoBodyDef = new BodyDef();
     UfoBodyDef.type = BodyType.DynamicBody;
@@ -154,6 +159,7 @@ public class Play extends GameState {
     // creating smallBoy
     boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
     boySprite = new Sprite(boyTexture);
+    boySprite.setScale(0.1f);
 
     BodyDef boyBodyDef = new BodyDef();
     boyBodyDef.type = BodyType.DynamicBody;
@@ -247,7 +253,7 @@ public class Play extends GameState {
     world.getBodies(dummyBodies);
     for (Body b : dummyBodies) {
       Sprite e = (Sprite) b.getUserData();
-      if (e != null) {
+      if (e != null && b.getFixtureList().get(0).getFilterData().categoryBits == BIT_HUMAN) {
         e.setPosition(b.getPosition().x - 8f, b.getPosition().y - 9.5f);
         e.draw(spriteBatch);
       }
@@ -262,9 +268,10 @@ public class Play extends GameState {
     }
 
     //backgroundSprite.draw(spriteBatch);
-    
-    spriteBatch.draw(background,0,0,srcX,0,Game.V_WIDTH,Game.V_HEIGHT);
-    srcX += 1;
+
+
+    spriteBatch.draw(background,0,0,160,15,srcX,0,1600,144,false,false);
+    srcX += 1.3;
     boySprite.draw(spriteBatch);
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
@@ -273,7 +280,7 @@ public class Play extends GameState {
 
   public void dispose() {
     spriteBatch.dispose();
-    //background.dispose();
+    background.dispose();
     boyTexture.dispose();
     ufoTexture.dispose();
   }

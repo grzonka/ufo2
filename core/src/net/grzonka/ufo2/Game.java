@@ -13,7 +13,7 @@ public class Game extends ApplicationAdapter {
   public static final String TITLE = "Ufo2 - early release.";
   public static final int V_WIDTH = 160;
   public static final int V_HEIGHT = 144;
-  public static final int SCALE = 8;
+  public static final int SCALE = 1;
 
   private SpriteBatch spriteBatch;
   private OrthographicCamera camera;
