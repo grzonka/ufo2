@@ -3,6 +3,7 @@ package net.grzonka.ufo2.model;
 import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
 import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
+import static net.grzonka.ufo2.model.B2DVars.BIT_UFO_LASER;
 import static net.grzonka.ufo2.model.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
@@ -142,6 +143,8 @@ public class Play extends GameState {
     ufoShape.setAsBox(.5f / PPM, 30f / PPM, new Vector2(0 / PPM, -30 / PPM), 0);
     ufoFixtureDef.shape = ufoShape;
     ufoFixtureDef.isSensor = true;
+    ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO_LASER;
+    ufoFixtureDef.filter.maskBits = BIT_HUMAN;
     // maybe need to insert filter with human here to get this sorted.
     ufoBody.createFixture(ufoFixtureDef).setUserData("sensor");
     ufoShape.dispose();
@@ -163,7 +166,7 @@ public class Play extends GameState {
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
-    fixtureDef.filter.maskBits = BIT_BORDER;
+    fixtureDef.filter.maskBits = BIT_BORDER | BIT_UFO_LASER;
     boyBody.setUserData(boySprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
     boyShape.dispose();

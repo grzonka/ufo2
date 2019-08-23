@@ -13,5 +13,6 @@ public class B2DVars {
   public static final short BIT_BORDER = 2;
   public static final short BIT_HUMAN = 4;
   public static final short BIT_UFO = 8;
+  public static final short BIT_UFO_LASER = 16;
 
 }
