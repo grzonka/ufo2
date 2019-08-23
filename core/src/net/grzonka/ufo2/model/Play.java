@@ -1,5 +1,8 @@
 package net.grzonka.ufo2.model;
 
+import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
+import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
+import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
 import static net.grzonka.ufo2.model.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
@@ -82,8 +85,15 @@ public class Play extends GameState {
 
     PolygonShape topBottomBox = new PolygonShape();
     topBottomBox.setAsBox(1000 / PPM, 1.0f / PPM);
-    topBody.createFixture(topBottomBox, 0.0f);
-    bottomBody.createFixture(topBottomBox, 0.0f);
+    FixtureDef topBottomFixtureDef = new FixtureDef();
+    topBottomFixtureDef.shape = topBottomBox;
+    topBottomFixtureDef.density = 0f;
+    topBottomFixtureDef.friction = 0;
+    topBottomFixtureDef.restitution = 0;
+    topBottomFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
+    topBottomFixtureDef.filter.maskBits = BIT_HUMAN | BIT_UFO;
+    topBody.createFixture(topBottomFixtureDef).setUserData("border");
+    bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
     topBottomBox.dispose();
 
     // creating start and end boundaries
@@ -96,8 +106,15 @@ public class Play extends GameState {
 
     PolygonShape startEndBox = new PolygonShape();
     startEndBox.setAsBox(1 / PPM, 144 / PPM);
-    startBody.createFixture(startEndBox, 0.0f);
-    endBody.createFixture(startEndBox, 0.0f);
+    FixtureDef startEndFixtureDef = new FixtureDef();
+    startEndFixtureDef.shape = startEndBox;
+    startEndFixtureDef.density = 0f;
+    startEndFixtureDef.friction = 0;
+    startEndFixtureDef.restitution = 0;
+    startEndFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
+    startEndFixtureDef.filter.maskBits = BIT_HUMAN | BIT_UFO;
+    startBody.createFixture(startEndFixtureDef).setUserData("border");
+    endBody.createFixture(startEndFixtureDef).setUserData("border");
     startEndBox.dispose();
 
     // creating ufo
@@ -118,6 +135,7 @@ public class Play extends GameState {
     ufoFixtureDef.friction = 0.4f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
+    ufoFixtureDef.filter.maskBits = BIT_BORDER;
     ufoBody.setUserData(ufoSprite);
     ufoBody.createFixture(ufoFixtureDef).setUserData("player");
 
@@ -145,6 +163,7 @@ public class Play extends GameState {
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
+    fixtureDef.filter.maskBits = BIT_BORDER;
     boyBody.setUserData(boySprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
     boyShape.dispose();
