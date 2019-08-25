@@ -50,6 +50,12 @@ public class TheCreator {
 
   public Body createBuilding(World world, int xPixel) {
 
+    // decide wether or not to spawn something at all
+    Random randomGen = new Random();
+    if (!randomGen.nextBoolean()){
+      return null;
+    }
+
     // first top and bottom boundaries
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.KinematicBody;
@@ -58,9 +64,10 @@ public class TheCreator {
     Body bottomBody = world.createBody(bodyDef);
 
     PolygonShape bodyBox = new PolygonShape();
-    Random randomGen = new Random();
-    int randomHeight = randomGen.nextInt(5) + 1;// generates 1-5
-    bodyBox.setAsBox(20 / PPM, randomHeight * 15 / PPM); // should be of height 10,20,30,40 or 50.
+    //Random randomGen = new Random();
+    int randomHeight = randomGen.nextInt(5);// generates 0-4
+    bodyBox.setAsBox(20 / PPM, randomHeight * 20 / PPM); // should be of height 20,40,60,80 or
+    // 100.
     FixtureDef topBottomFixtureDef = new FixtureDef();
     topBottomFixtureDef.shape = bodyBox;
     topBottomFixtureDef.density = 0f;
