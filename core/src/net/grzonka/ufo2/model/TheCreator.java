@@ -1,6 +1,7 @@
 package net.grzonka.ufo2.model;
 
 import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
+import static net.grzonka.ufo2.model.B2DVars.BIT_BUILDING;
 import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO_LASER;
@@ -39,7 +40,7 @@ public class TheCreator {
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
-    fixtureDef.filter.maskBits = BIT_BORDER | BIT_UFO_LASER;
+    fixtureDef.filter.maskBits = BIT_BUILDING | BIT_UFO_LASER | B2DVars.BIT_DESPAWN;
     boyBody.setUserData(boySprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
     boyShape.dispose();
@@ -47,7 +48,7 @@ public class TheCreator {
     return boyBody;
   }
 
-  public Body createKinematicBox(World world, int height) {
+  public Body createBuilding(World world, int height) {
 
     // first top and bottom boundaries
     BodyDef bodyDef = new BodyDef();
@@ -65,10 +66,9 @@ public class TheCreator {
     topBottomFixtureDef.density = 0f;
     topBottomFixtureDef.friction = 1f;
     topBottomFixtureDef.restitution = 0;
-    topBottomFixtureDef.filter.categoryBits = B2DVars.BIT_BORDER;
-    topBottomFixtureDef.filter.maskBits = BIT_HUMAN;
-    bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
-    bottomBody.createFixture(topBottomFixtureDef).setUserData("border");
+    topBottomFixtureDef.filter.categoryBits = B2DVars.BIT_BUILDING;
+    topBottomFixtureDef.filter.maskBits = BIT_HUMAN | B2DVars.BIT_DESPAWN;
+    bottomBody.createFixture(topBottomFixtureDef).setUserData("building");
     bottomBody.setLinearVelocity(-8, 0);
     bodyBox.dispose();
 

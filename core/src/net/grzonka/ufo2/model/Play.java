@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 import net.grzonka.ufo2.Game;
 import net.grzonka.ufo2.controller.GameStateManager;
 import net.grzonka.ufo2.controller.MyContactListener;
@@ -33,6 +34,8 @@ public class Play extends GameState {
   private World world;
   private MyContactListener customContactListener;
   private Box2DDebugRenderer debugRenderer;
+
+  private static ArrayList<Body> garbageCollector;
 
   private Texture background;
   private Sprite backgroundSprite;
@@ -64,6 +67,8 @@ public class Play extends GameState {
   public Play(GameStateManager gsm) {
     super(gsm);
     customContactListener = new MyContactListener();
+
+    garbageCollector = new ArrayList<>();
 
     background = new Texture(Gdx.files.internal("background_10_wide.png"), true);
     background.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.MipMapLinearLinear);
@@ -121,6 +126,14 @@ public class Play extends GameState {
     startEndFixtureDef.filter.maskBits = BIT_HUMAN | BIT_UFO;
     startBody.createFixture(startEndFixtureDef).setUserData("border");
     endBody.createFixture(startEndFixtureDef).setUserData("border");
+
+    // making a despawn boundary to remove humans and buildings.
+    startEndBodyDef.position.set(12 / PPM, 80 / PPM);
+    Body despawnBody = world.createBody(startEndBodyDef);
+    startEndFixtureDef.filter.categoryBits = B2DVars.BIT_DESPAWN;
+    startEndFixtureDef.filter.maskBits = BIT_HUMAN | B2DVars.BIT_BUILDING;
+    despawnBody.createFixture(startEndFixtureDef).setUserData("despawn");
+
     startEndBox.dispose();
 
     // creating ufo
@@ -156,28 +169,6 @@ public class Play extends GameState {
     ufoShape.dispose();
 
     theCreator = new TheCreator();
-    // creating smallBoy
-    /*boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
-    boySprite = new Sprite(boyTexture);
-    boySprite.setScale(0.1f);
-
-    BodyDef boyBodyDef = new BodyDef();
-    boyBodyDef.type = BodyType.DynamicBody;
-    boyBodyDef.position.set(100 / PPM, 100 / PPM);
-    boyBody = world.createBody(boyBodyDef);
-
-    PolygonShape boyShape = new PolygonShape();
-    boyShape.setAsBox(8 / PPM, 9.5f / PPM); // for some reason 1 unit here = 2px
-    FixtureDef fixtureDef = new FixtureDef();
-    fixtureDef.shape = boyShape;
-    fixtureDef.density = 0.00002f; // human density
-    fixtureDef.friction = 0.4f;
-    fixtureDef.restitution = 0f;
-    fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
-    fixtureDef.filter.maskBits = BIT_BORDER | BIT_UFO_LASER;
-    boyBody.setUserData(boySprite);
-    boyBody.createFixture(fixtureDef).setUserData("human");
-    boyShape.dispose();*/
 
     // setting up camera
     camera = new OrthographicCamera();
@@ -210,14 +201,7 @@ public class Play extends GameState {
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
-    /*if (pos.x < camera.position.x - (50/PPM) && camera.position.x > 80/PPM) {
-      camera.translate(-1, 0, 0);
-    }
-    if (pos.x > camera.position.x + 50/PPM && camera.position.x < 1520/PPM) {
-      camera.translate(1, 0, 0);
-    }
-    camera.update();
-    */
+
     if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
       System.out.println("ZAP!!!");
       Body human = customContactListener.getHuman();
@@ -230,16 +214,27 @@ public class Play extends GameState {
     }
   }
 
+  public static void addToGarbageCollector(Body body) {
+    garbageCollector.add(body);
+  }
+
   public void update(float dt) {
 
     handleInput();
     world.step(dt, 8, 3);
+    clearGarbageCollector();
+  }
 
+  private void clearGarbageCollector() {
+    for (Body b : garbageCollector) {
+      world.destroyBody(b);
+    }
+    garbageCollector.clear();
   }
 
   public void render() {
     // clearing screen first
-    Array<Body> dummyBodies = new Array<>();
+    Array<Body> dummyBodies = new Array<>(0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     spriteBatch.setProjectionMatrix(camera.combined);
 
@@ -248,7 +243,7 @@ public class Play extends GameState {
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
     if (srcX % 30 == 0) {
-      dummyBodies.add(theCreator.createKinematicBox(world, 3));
+      dummyBodies.add(theCreator.createBuilding(world, 3));
     }
     if (srcX % 90 == 0) {
       dummyBodies.add(theCreator.createHuman(100, 100, world));
@@ -261,6 +256,14 @@ public class Play extends GameState {
       if (e != null && b.getFixtureList().get(0).getFilterData().categoryBits == BIT_HUMAN) {
         e.setPosition(b.getPosition().x - 8f, b.getPosition().y - 9.5f);
         e.draw(spriteBatch);
+        //System.out.println("Human is at: " + b.getPosition().x);
+      }
+      // delete buildings that reach end of level
+      if (b.getType() == BodyType.KinematicBody && b.getPosition().x < 3/PPM) {
+        addToGarbageCollector(b);
+
+        System.out.println("scheduled " + b + "for deletion.");
+        //System.out.println(dummyBodies.size);
       }
     }
 
@@ -289,4 +292,5 @@ public class Play extends GameState {
     boyTexture.dispose();
     ufoTexture.dispose();
   }
+
 }

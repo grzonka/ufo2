@@ -14,5 +14,9 @@ public class B2DVars {
   public static final short BIT_HUMAN = 4;
   public static final short BIT_UFO = 8;
   public static final short BIT_UFO_LASER = 16;
+  public static final short BIT_BUILDING = 32;
+  public static final short BIT_DESPAWN = 64;
+
+
 
 }

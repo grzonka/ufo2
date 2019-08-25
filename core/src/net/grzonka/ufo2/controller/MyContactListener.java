@@ -6,6 +6,8 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
+import net.grzonka.ufo2.model.Play;
 
 public class MyContactListener implements ContactListener {
 
@@ -24,6 +26,7 @@ public class MyContactListener implements ContactListener {
     fa = c.getFixtureA();
     fb = c.getFixtureB();
 
+    // handles ufoSensor - human interaction
     if (fa.getUserData() != null && fa.getUserData().equals("sensor") && fb.getUserData() != null
         && fb.getUserData().equals(
         "human")) {
@@ -35,6 +38,41 @@ public class MyContactListener implements ContactListener {
         "human")) {
       System.out.println("SPOTTED HUMAN!"); // TODO: remove debug
       humanSpotted = true;
+    }
+
+
+    // handles humans exiting screen
+    if (fa.getUserData() != null && fa.getUserData().equals("despawn") && fb.getUserData() != null
+        && fb.getUserData().equals(
+        "human")) {
+      System.out.println("HUMAN REACHED THE LIGHT!"); // TODO: remove debug
+      // TODO: maybe even handle human despawn here.
+      Play.addToGarbageCollector(fb.getBody());
+    }
+    if (fb.getUserData() != null && fb.getUserData().equals("despawn") && fa.getUserData() != null
+        && fa.getUserData().equals(
+        "human")) {
+      System.out.println("HUMAN REACHED THE LIGHT!"); // TODO: remove debug
+      //humanSpotted = true;
+      Play.addToGarbageCollector(fa.getBody());
+
+    }
+
+    // handle buildings exiting screen
+    if (fa.getUserData() != null && fa.getUserData().equals("despawn") && fb.getUserData() != null
+        && fb.getUserData().equals(
+        "building")) {
+      System.out.println("BUILDING EXITED SCREEN!"); // TODO: remove debug
+      // TODO: maybe even handle human despawn here.
+      Play.addToGarbageCollector(fb.getBody());
+    }
+    if (fb.getUserData() != null && fb.getUserData().equals("despawn") && fa.getUserData() != null
+        && fa.getUserData().equals(
+        "building")) {
+      System.out.println("BUILDING EXITED SCREEN!"); // TODO: remove debug
+      //humanSpotted = true;
+      Play.addToGarbageCollector(fa.getBody());
+
     }
 
   }
@@ -50,6 +88,7 @@ public class MyContactListener implements ContactListener {
     fa = c.getFixtureA();
     fb = c.getFixtureB();
 
+    // handles ufoSensor - human interaction
     if (fa.getUserData() != null && fa.getUserData().equals("sensor") && fb.getUserData() != null
         && fb.getUserData().equals(
         "human")) {
@@ -63,6 +102,31 @@ public class MyContactListener implements ContactListener {
       System.out.println("LOST HUMAN!"); // TODO: remove debug
       humanSpotted = false;
     }
+
+    // human exiting screen interaction
+    if (fa.getUserData() != null && fa.getUserData().equals("despawn") && fb.getUserData() != null
+        && fb.getUserData().equals(
+        "human")) {
+      System.out.println("HUMAN SURVIVED!"); // TODO: remove debug
+    }
+    if (fb.getUserData() != null && fb.getUserData().equals("human") && fa.getUserData() != null
+        && fa.getUserData().equals(
+        "despawn")) {
+      System.out.println("HUMAN SURVIVED!"); // TODO: remove debug
+    }
+
+    // handles buildings exiting screen
+    if (fa.getUserData() != null && fa.getUserData().equals("despawn") && fb.getUserData() != null
+        && fb.getUserData().equals(
+        "building")) {
+      System.out.println("BUILDING DELETED!"); // TODO: remove debug
+    }
+    if (fb.getUserData() != null && fb.getUserData().equals("despawn") && fa.getUserData() != null
+        && fa.getUserData().equals(
+        "building")) {
+      System.out.println("BUILDING DELETED!"); // TODO: remove debug
+    }
+
   }
 
   /**
