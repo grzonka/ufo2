@@ -207,6 +207,8 @@ public class Play extends GameState {
       // removing fixture around human in order for them to disappear.
       // TODO: make this more interesting to watch maybe
       if (human != null) {
+        Game.increaseHealth(1000);
+        Game.increaseScore(1);
         human.applyForce(0f, 5000f, 0, 0, true);
         soundEffectWarp.play(0.5f);
       }

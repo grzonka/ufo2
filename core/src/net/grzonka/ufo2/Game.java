@@ -21,8 +21,8 @@ public class Game extends ApplicationAdapter {
   public static final int V_HEIGHT = 144;
   public static final int SCALE = 1;
 
-  private int score;
-  private int health = 8000;
+  private static int score;
+  private static int health = 8000;
   private String scoreDiplayed;
   BitmapFont scoreFont;
 
@@ -58,7 +58,6 @@ public class Game extends ApplicationAdapter {
     pixmap.setColor(Color.RED);
     pixmap.fill();
 
-
     spriteBatch = new SpriteBatch();
     camera = new OrthographicCamera(V_WIDTH, V_HEIGHT);
     camera.translate(80f, 72f, 0f);
@@ -72,8 +71,6 @@ public class Game extends ApplicationAdapter {
   // render() is called each frame.
   @Override
   public void render() {
-
-
 
     timeAccum += Gdx.graphics.getDeltaTime();
     while (timeAccum >= STEP) {
@@ -92,27 +89,29 @@ public class Game extends ApplicationAdapter {
     shapeRenderer.setProjectionMatrix(spriteBatch.getProjectionMatrix());
     shapeRenderer.identity();
     shapeRenderer.setColor(Color.LIGHT_GRAY);
-    shapeRenderer.rect(74/B2DVars.PPM, 136/B2DVars.PPM, 80/B2DVars.PPM, 5/B2DVars.PPM);
+    shapeRenderer.rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, 80 / B2DVars.PPM, 5 / B2DVars.PPM);
     shapeRenderer.setColor(Color.BLACK);
-    shapeRenderer.rect(74/B2DVars.PPM, 136/B2DVars.PPM, (health/100f)/B2DVars.PPM, 5/B2DVars.PPM);
-    if(health >= 0) {
-        health -= 6;
-    }else{
-        System.out.println("GAME Should end here");}
+    shapeRenderer
+        .rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, (health / 100f) / B2DVars.PPM, 5 / B2DVars.PPM);
+    if (health >= 0) {
+      health -= 6;
+    } else {
+      System.out.println("GAME Should end here");
+    }
     shapeRenderer.end();
     spriteBatch.end();
 
     spriteBatch.begin();
-    scoreFont.draw(spriteBatch,scoreDiplayed,0.5f,14);
+    scoreFont.draw(spriteBatch, scoreDiplayed, 0.5f, 14);
     spriteBatch.end();
   }
 
-  public void increaseHealth(int health){
-      this.health += health;
+  public static void increaseHealth(int hpIncrease) {
+    health += hpIncrease;
   }
 
-  public void increaseScore(int score){
-      this.score += score;
+  public static void increaseScore(int additionalScore) {
+    score += additionalScore;
   }
 
 
