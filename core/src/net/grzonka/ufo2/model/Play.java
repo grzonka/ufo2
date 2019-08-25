@@ -89,7 +89,7 @@ public class Play extends GameState {
     // first top and bottom boundaries
     BodyDef topBottomBodyDef = new BodyDef();
     topBottomBodyDef.type = BodyType.StaticBody;
-    topBottomBodyDef.position.set(new Vector2(1000 / PPM, 144.5f / PPM));
+    topBottomBodyDef.position.set(1000 / PPM, 144.5f / PPM);
     Body topBody = world.createBody(topBottomBodyDef);
     topBottomBodyDef.position.set(new Vector2(1000 / PPM, -0.5f / PPM));
     Body bottomBody = world.createBody(topBottomBodyDef);
@@ -110,9 +110,9 @@ public class Play extends GameState {
     // creating start and end boundaries
     BodyDef startEndBodyDef = new BodyDef();
     startEndBodyDef.type = BodyType.StaticBody;
-    startEndBodyDef.position.set(-0.5f / PPM, 80 / PPM);
+    startEndBodyDef.position.set(-20.5f / PPM, 80 / PPM);
     Body startBody = world.createBody(startEndBodyDef);
-    startEndBodyDef.position.set(160.5f / PPM, 80 / PPM);
+    startEndBodyDef.position.set(180.5f / PPM, 80 / PPM);
     Body endBody = world.createBody(startEndBodyDef);
 
     PolygonShape startEndBox = new PolygonShape();
@@ -128,7 +128,7 @@ public class Play extends GameState {
     endBody.createFixture(startEndFixtureDef).setUserData("border");
 
     // making a despawn boundary to remove humans and buildings.
-    startEndBodyDef.position.set(12 / PPM, 80 / PPM);
+    startEndBodyDef.position.set(-20 / PPM, 80 / PPM);  // position at which humans get disposed
     Body despawnBody = world.createBody(startEndBodyDef);
     startEndFixtureDef.filter.categoryBits = B2DVars.BIT_DESPAWN;
     startEndFixtureDef.filter.maskBits = BIT_HUMAN | B2DVars.BIT_BUILDING;
@@ -139,7 +139,7 @@ public class Play extends GameState {
     // creating ufo
     ufoTexture = new Texture(Gdx.files.internal("ufo_transparent_0_zap.png")); // 0 - 6 are zap
     ufoSprite = new Sprite(ufoTexture);
-    ufoSprite.setScale(0.1f);
+    ufoSprite.setScale(1 / PPM);
 
     BodyDef UfoBodyDef = new BodyDef();
     UfoBodyDef.type = BodyType.DynamicBody;
@@ -147,15 +147,14 @@ public class Play extends GameState {
     ufoBody = world.createBody(UfoBodyDef);
 
     PolygonShape ufoShape = new PolygonShape();
-    ufoShape.setAsBox(20 / PPM, 7.5f / PPM); // ufo size in meter: (20*7.5) = 150m^2
+    ufoShape.setAsBox(20 / PPM, 7.5f / PPM);
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
     ufoFixtureDef.density = 0f; // ufo density (kg/m^2)
-    // results in ufo mass = 150kg (affected by gravity with -10m/s^2)
     ufoFixtureDef.friction = 0.4f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
-    ufoFixtureDef.filter.maskBits = BIT_BORDER;
+    ufoFixtureDef.filter.maskBits = BIT_BORDER | B2DVars.BIT_BUILDING;
     ufoBody.setUserData(ufoSprite);
     ufoBody.createFixture(ufoFixtureDef).setUserData("player");
 
@@ -243,10 +242,10 @@ public class Play extends GameState {
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
     if (srcX % 30 == 0) {
-      dummyBodies.add(theCreator.createBuilding(world, 3));
+      dummyBodies.add(theCreator.createBuilding(world, 300));
     }
     if (srcX % 90 == 0) {
-      dummyBodies.add(theCreator.createHuman(100, 100, world));
+      dummyBodies.add(theCreator.createHuman(300, 120, world));
     }
 
     // rendering humans
@@ -258,12 +257,12 @@ public class Play extends GameState {
         e.draw(spriteBatch);
         //System.out.println("Human is at: " + b.getPosition().x);
       }
-      // delete buildings that reach end of level
-      if (b.getType() == BodyType.KinematicBody && b.getPosition().x < 3/PPM) {
+      // delete buildings that leave the screen. (number should be grater then human despawn
+      // location.
+      if (b.getType() == BodyType.KinematicBody && b.getPosition().x < -50 / PPM) {
         addToGarbageCollector(b);
-
-        System.out.println("scheduled " + b + "for deletion.");
-        //System.out.println(dummyBodies.size);
+        // System.out.println("scheduled " + b + "for deletion.");
+        // System.out.println(dummyBodies.size);
       }
     }
 

@@ -48,13 +48,13 @@ public class TheCreator {
     return boyBody;
   }
 
-  public Body createBuilding(World world, int height) {
+  public Body createBuilding(World world, int xPixel) {
 
     // first top and bottom boundaries
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyType.KinematicBody;
     // spawn location
-    bodyDef.position.set(new Vector2(140 / PPM, 1f / PPM));
+    bodyDef.position.set(new Vector2(xPixel / PPM, 1f / PPM));
     Body bottomBody = world.createBody(bodyDef);
 
     PolygonShape bodyBox = new PolygonShape();
@@ -67,7 +67,7 @@ public class TheCreator {
     topBottomFixtureDef.friction = 1f;
     topBottomFixtureDef.restitution = 0;
     topBottomFixtureDef.filter.categoryBits = B2DVars.BIT_BUILDING;
-    topBottomFixtureDef.filter.maskBits = BIT_HUMAN | B2DVars.BIT_DESPAWN;
+    topBottomFixtureDef.filter.maskBits = BIT_HUMAN | B2DVars.BIT_DESPAWN | BIT_UFO;
     bottomBody.createFixture(topBottomFixtureDef).setUserData("building");
     bottomBody.setLinearVelocity(-8, 0);
     bodyBox.dispose();
