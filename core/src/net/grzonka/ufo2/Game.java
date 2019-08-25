@@ -21,9 +21,10 @@ public class Game extends ApplicationAdapter {
   public static final int V_WIDTH = 160;
   public static final int V_HEIGHT = 144;
   public static final int SCALE = 1;
+  private static final int MAX_HEALTH = 8000;
 
   private static int score;
-  private static int health = 8000;
+  private static int health = MAX_HEALTH;
   private String scoreDiplayed;
   BitmapFont scoreFont;
 
@@ -100,9 +101,11 @@ public class Game extends ApplicationAdapter {
     shapeRenderer.identity();
     shapeRenderer.setColor(Color.LIGHT_GRAY);
     shapeRenderer.rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, 80 / B2DVars.PPM, 5 / B2DVars.PPM);
-    shapeRenderer.setColor(Color.BLACK);
+    if((health <= MAX_HEALTH/4) && ((health /60) %3 == 0)) { //blinking effect when health drops below 25 %
+    shapeRenderer.setColor(Color.LIGHT_GRAY);
+    }else {shapeRenderer.setColor(Color.BLACK);}
     shapeRenderer
-        .rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, (health / 100f) / B2DVars.PPM, 5 / B2DVars.PPM);
+            .rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, (health / 100f) / B2DVars.PPM, 5 / B2DVars.PPM);
     if (health >= 0) {
       health -= 6;
     } else {
