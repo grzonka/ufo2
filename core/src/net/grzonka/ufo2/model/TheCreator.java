@@ -21,29 +21,43 @@ import java.util.Random;
 
 public class TheCreator {
 
+  Texture boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
+  Texture girlTexture = new Texture(Gdx.files.internal("small_girl_transparent_human.png"));
+
+  Random randomGen = new Random();
+
   public Body createHuman(int xPixel, int yPixel, World world) {
 
-    Texture boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
-    Sprite boySprite = new Sprite(boyTexture);
-    boySprite.setScale(0.1f);
+    Texture humanTexture;
+
+    if(randomGen.nextBoolean()){
+      System.out.println("Its a girl");
+      humanTexture = girlTexture;
+    } else {
+      System.out.println("Its a boy");
+      humanTexture = boyTexture;
+    }
+
+    Sprite humanSprite = new Sprite(humanTexture);
+    humanSprite.setScale(0.1f);
 
     BodyDef boyBodyDef = new BodyDef();
     boyBodyDef.type = BodyType.DynamicBody;
     boyBodyDef.position.set(xPixel / PPM, yPixel / PPM);
     Body boyBody = world.createBody(boyBodyDef);
 
-    PolygonShape boyShape = new PolygonShape();
-    boyShape.setAsBox(8 / PPM, 9.5f / PPM);
+    PolygonShape humanShape = new PolygonShape();
+    humanShape.setAsBox(8 / PPM, 9.5f / PPM);
     FixtureDef fixtureDef = new FixtureDef();
-    fixtureDef.shape = boyShape;
+    fixtureDef.shape = humanShape;
     fixtureDef.density = 0.00002f; // human density
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
     fixtureDef.filter.maskBits = BIT_BUILDING | BIT_UFO_LASER | B2DVars.BIT_DESPAWN;
-    boyBody.setUserData(boySprite);
+    boyBody.setUserData(humanSprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
-    boyShape.dispose();
+    humanShape.dispose();
 
     return boyBody;
   }
@@ -51,7 +65,7 @@ public class TheCreator {
   public Body createBuilding(World world, int xPixel) {
     int randomHeight = 0;
     // decide wether or not to spawn something at all
-    Random randomGen = new Random();
+
     if (!randomGen.nextBoolean()) {
       randomHeight = randomGen.nextInt(5);// generates 0-4
     }
