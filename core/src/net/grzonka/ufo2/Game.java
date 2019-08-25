@@ -2,13 +2,17 @@ package net.grzonka.ufo2;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import net.grzonka.ufo2.controller.Content;
 import net.grzonka.ufo2.controller.GameStateManager;
+import net.grzonka.ufo2.model.B2DVars;
 
 public class Game extends ApplicationAdapter {
 
@@ -18,6 +22,7 @@ public class Game extends ApplicationAdapter {
   public static final int SCALE = 1;
 
   private int score;
+  private int health = 8000;
   private String scoreDiplayed;
   BitmapFont scoreFont;
 
@@ -45,8 +50,14 @@ public class Game extends ApplicationAdapter {
     resources = new Content();
 
     score = 0;
-    scoreDiplayed = "0";
+    scoreDiplayed = Integer.toString(score);
     scoreFont = new BitmapFont();
+    scoreFont.getData();
+
+    Pixmap pixmap = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
+    pixmap.setColor(Color.RED);
+    pixmap.fill();
+
 
     spriteBatch = new SpriteBatch();
     camera = new OrthographicCamera(V_WIDTH, V_HEIGHT);
@@ -74,11 +85,36 @@ public class Game extends ApplicationAdapter {
     }
     spriteBatch.begin();
     scoreFont.setColor(0f, 0f, 0f, 1f);
-    scoreFont.getData().setScale(0.06f);
+    scoreFont.getData().setScale(0.1f);
 
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    shapeRenderer.setProjectionMatrix(spriteBatch.getProjectionMatrix());
+    shapeRenderer.identity();
+    shapeRenderer.setColor(Color.LIGHT_GRAY);
+    shapeRenderer.rect(74/B2DVars.PPM, 136/B2DVars.PPM, 80/B2DVars.PPM, 5/B2DVars.PPM);
+    shapeRenderer.setColor(Color.BLACK);
+    shapeRenderer.rect(74/B2DVars.PPM, 136/B2DVars.PPM, (health/100f)/B2DVars.PPM, 5/B2DVars.PPM);
+    if(health >= 0) {
+        health -= 6;
+    }else{
+        System.out.println("GAME Should end here");}
+    shapeRenderer.end();
+    spriteBatch.end();
+
+    spriteBatch.begin();
     scoreFont.draw(spriteBatch,scoreDiplayed,0.5f,14);
     spriteBatch.end();
   }
+
+  public void increaseHealth(int health){
+      this.health += health;
+  }
+
+  public void increaseScore(int score){
+      this.score += score;
+  }
+
 
   @Override
   public void resize(int width, int height) {
