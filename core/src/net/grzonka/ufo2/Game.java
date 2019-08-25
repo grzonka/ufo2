@@ -125,7 +125,9 @@ public class Game extends ApplicationAdapter {
   }
 
   public static void increaseHealth(int hpIncrease) {
-    health += hpIncrease;
+    if((health + hpIncrease) <= MAX_HEALTH) {
+      health += hpIncrease;
+    }else{health = MAX_HEALTH;}
   }
 
   public static void increaseScore(int additionalScore) {
