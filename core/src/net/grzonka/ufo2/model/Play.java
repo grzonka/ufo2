@@ -1,6 +1,7 @@
 package net.grzonka.ufo2.model;
 
 import static net.grzonka.ufo2.model.B2DVars.BIT_BORDER;
+import static net.grzonka.ufo2.model.B2DVars.BIT_BUILDING;
 import static net.grzonka.ufo2.model.B2DVars.BIT_HUMAN;
 import static net.grzonka.ufo2.model.B2DVars.BIT_UFO;
 import static net.grzonka.ufo2.model.B2DVars.PPM;
@@ -243,7 +244,7 @@ public class Play extends GameState {
 
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
-    if (srcX % 30 == 0) {
+    if (srcX % 15 == 0) {
       dummyBodies.add(theCreator.createBuilding(world, 300));
     }
     if (srcX % 90 == 0) {
@@ -255,9 +256,43 @@ public class Play extends GameState {
     for (Body b : dummyBodies) {
       Sprite e = (Sprite) b.getUserData();
       if (e != null && b.getFixtureList().get(0).getFilterData().categoryBits == BIT_HUMAN) {
+        //System.out.println("PRINTING HUMAN");
         e.setPosition(b.getPosition().x - 8f, b.getPosition().y - 9.5f);
         e.draw(spriteBatch);
         //System.out.println("Human is at: " + b.getPosition().x);
+      } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building0")) {
+       /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
+         .getPosition().y);*/
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y-0.5f);
+
+        e.draw(spriteBatch);
+      } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building20")) {
+       /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
+         .getPosition().y);*/
+        e.setPosition(b.getPosition().x-10, b.getPosition().y -9f);
+
+        e.draw(spriteBatch);
+      }
+      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building40")) {
+       /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
+         .getPosition().y);*/
+        e.setPosition(b.getPosition().x-10, b.getPosition().y -18f);
+
+        e.draw(spriteBatch);
+      }
+      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building60")) {
+       /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
+         .getPosition().y);*/
+        e.setPosition(b.getPosition().x-10, b.getPosition().y -27f);
+
+        e.draw(spriteBatch);
+      }
+      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building80")) {
+       /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
+         .getPosition().y);*/
+        e.setPosition(b.getPosition().x-10, b.getPosition().y -36f);
+
+        e.draw(spriteBatch);
       }
       // delete buildings that leave the screen. (number should be grater then human despawn
       // location.
