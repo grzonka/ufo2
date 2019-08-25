@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -28,6 +29,9 @@ public class Game extends ApplicationAdapter {
 
   private SpriteBatch spriteBatch;
   private OrthographicCamera camera;
+
+  Texture startScreen;
+  Sprite startScreenSprite = new Sprite();
 
   private GameStateManager gameStateManager;
 
@@ -58,9 +62,15 @@ public class Game extends ApplicationAdapter {
     pixmap.setColor(Color.RED);
     pixmap.fill();
 
+
+    this.startScreen = new Texture(Gdx.files.internal("start_screen.png"));
+    startScreenSprite = new Sprite(startScreen);
     spriteBatch = new SpriteBatch();
     camera = new OrthographicCamera(V_WIDTH, V_HEIGHT);
     camera.translate(80f, 72f, 0f);
+
+
+
 
     gameStateManager = new GameStateManager(this);
 
@@ -103,6 +113,11 @@ public class Game extends ApplicationAdapter {
 
     spriteBatch.begin();
     scoreFont.draw(spriteBatch, scoreDiplayed, 0.5f, 14);
+    spriteBatch.end();
+
+    spriteBatch.begin();
+    //TODO remove this when game hast started
+    spriteBatch.draw(startScreenSprite,0,0,160f/B2DVars.PPM,144f/B2DVars.PPM);
     spriteBatch.end();
   }
 
