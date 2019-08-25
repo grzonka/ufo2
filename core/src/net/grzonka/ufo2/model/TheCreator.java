@@ -49,11 +49,11 @@ public class TheCreator {
   }
 
   public Body createBuilding(World world, int xPixel) {
-
+    int randomHeight = 0;
     // decide wether or not to spawn something at all
     Random randomGen = new Random();
-    if (!randomGen.nextBoolean()){
-      return null;
+    if (!randomGen.nextBoolean()) {
+      randomHeight = randomGen.nextInt(5);// generates 0-4
     }
 
     // first top and bottom boundaries
@@ -65,7 +65,7 @@ public class TheCreator {
 
     PolygonShape bodyBox = new PolygonShape();
     //Random randomGen = new Random();
-    int randomHeight = randomGen.nextInt(5);// generates 0-4
+    //int randomHeight = randomGen.nextInt(5);// generates 0-4
     bodyBox.setAsBox(20 / PPM, randomHeight * 20 / PPM); // should be of height 20,40,60,80 or
     // 100.
     FixtureDef topBottomFixtureDef = new FixtureDef();
