@@ -57,13 +57,6 @@ public class Game extends ApplicationAdapter {
     resources = new Content();
 
     score = 0;
-    scoreDiplayed = Integer.toString(score);
-    scoreFont = new BitmapFont();
-    scoreFont.getData();
-
-    Pixmap pixmap = new Pixmap(100, 20, Pixmap.Format.RGBA8888);
-    pixmap.setColor(Color.RED);
-    pixmap.fill();
 
 
     this.startScreen = new Texture(Gdx.files.internal("start_screen.png"));
@@ -94,9 +87,18 @@ public class Game extends ApplicationAdapter {
 
     }
     if(gameHasStarted) {
-    spriteBatch.begin();
-    scoreFont.setColor(0f, 0f, 0f, 1f);
-    scoreFont.getData().setScale(0.1f);
+
+      spriteBatch.begin();
+      scoreDiplayed = Integer.toString(score);
+      scoreFont = new BitmapFont();
+      scoreFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
+
+      spriteBatch.end();
+
+      spriteBatch.begin();
+      scoreFont.setColor(0f, 0f, 0f, 1f);
+      scoreFont.getData().setScale(0.15f);
+
 
       ShapeRenderer shapeRenderer = new ShapeRenderer();
       shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -104,13 +106,15 @@ public class Game extends ApplicationAdapter {
       shapeRenderer.identity();
       shapeRenderer.setColor(Color.LIGHT_GRAY);
       shapeRenderer.rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, 80 / B2DVars.PPM, 5 / B2DVars.PPM);
-      if ((health <= MAX_HEALTH / 4) && ((health / 60) % 3 == 0)) { //blinking effect when health drops below 25 %
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-      } else {
-        shapeRenderer.setColor(Color.BLACK);
+      if(health >= 0) {
+        if ((health <= MAX_HEALTH / 4) && ((health / 60) % 3 == 0)) { //blinking effect when health drops below 25 %
+          shapeRenderer.setColor(Color.LIGHT_GRAY);
+        } else {
+          shapeRenderer.setColor(Color.BLACK);
+        }
+        shapeRenderer
+                .rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, (health / 100f) / B2DVars.PPM, 5 / B2DVars.PPM);
       }
-      shapeRenderer
-              .rect(74 / B2DVars.PPM, 136 / B2DVars.PPM, (health / 100f) / B2DVars.PPM, 5 / B2DVars.PPM);
       if (health >= 0 &&gameHasStarted) {
         increaseHealth(-6);
       } else {
@@ -122,6 +126,7 @@ public class Game extends ApplicationAdapter {
       spriteBatch.begin();
       scoreFont.draw(spriteBatch, scoreDiplayed, 0.5f, 14);
       spriteBatch.end();
+
     }else{
     spriteBatch.begin();
     //TODO remove this when game hast started
@@ -130,10 +135,15 @@ public class Game extends ApplicationAdapter {
   }
 
   public static void increaseHealth(int hpIncrease) {
-    if((health + hpIncrease) <= MAX_HEALTH) {
-      health += hpIncrease;
-    }else{health = MAX_HEALTH;}
+    if (health >= 0) {
+      if ((health + hpIncrease) <= MAX_HEALTH) {
+        health += hpIncrease;
+      } else {
+        health = MAX_HEALTH;
+      }
+    }else {health = 0;}
   }
+
 
   public static void increaseScore(int additionalScore) {
     score += additionalScore;
