@@ -62,7 +62,7 @@ public class Play extends GameState {
   final float moveSpeed = 1.5f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
-  private int srcX;
+  private float srcX;
 
 
   public Play(GameStateManager gsm) {
@@ -253,8 +253,8 @@ public class Play extends GameState {
 
     spriteBatch.begin();
 
-    spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
-    srcX += 1;
+    spriteBatch.draw(background, 0, 0, 160, 15, (int)srcX, 0, 1600, 144, false, false);
+    srcX += 0.5;
 
     if (Game.gameHasStarted) {
 
