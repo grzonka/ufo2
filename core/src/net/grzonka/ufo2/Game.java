@@ -17,7 +17,7 @@ import net.grzonka.ufo2.model.B2DVars;
 
 public class Game extends ApplicationAdapter {
 
-  public boolean gameHasStarted = false;
+  public static boolean gameHasStarted = false;
 
   public static final String TITLE = "Ufo2 - early release.";
   public static final int V_WIDTH = 160;

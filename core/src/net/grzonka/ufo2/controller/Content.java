@@ -15,7 +15,7 @@ public class Content {
     sounds = new HashMap<>();
   }
 
-  // texture handling
+  // texture handing
   public void loadTexture(String path, String key) {
     Texture tempTexture = new Texture(Gdx.files.internal(path));
     textures.put(key, tempTexture);

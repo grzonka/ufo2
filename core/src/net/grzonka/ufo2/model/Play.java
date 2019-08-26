@@ -202,6 +202,10 @@ public class Play extends GameState {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
 
+    if (Gdx.input.isKeyPressed(Keys.SPACE) && !Game.gameHasStarted) {
+      Game.gameHasStarted = true;
+    }
+
     if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
       System.out.println("ZAP!!!");
       Body human = customContactListener.getHuman();
@@ -235,6 +239,7 @@ public class Play extends GameState {
   }
 
   public void render() {
+
     // clearing screen first
     Array<Body> dummyBodies = new Array<>(0);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -244,11 +249,15 @@ public class Play extends GameState {
 
     spriteBatch.draw(background, 0, 0, 160, 15, srcX, 0, 1600, 144, false, false);
     srcX += 1;
-    if (srcX % 15 == 0) {
-      dummyBodies.add(theCreator.createBuilding(world, 300));
-    }
-    if (srcX % 90 == 0) {
-      dummyBodies.add(theCreator.createHuman(300, 120, world));
+
+    if (Game.gameHasStarted) {
+
+      if (srcX % 15 == 0) {
+        dummyBodies.add(theCreator.createBuilding(world, 300));
+      }
+      if (srcX % 90 == 0) {
+        dummyBodies.add(theCreator.createHuman(300, 120, world));
+      }
     }
 
     // rendering humans
@@ -263,34 +272,31 @@ public class Play extends GameState {
       } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building0")) {
        /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
          .getPosition().y);*/
-        e.setPosition(b.getPosition().x - 10, b.getPosition().y-0.5f);
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y - 0.5f);
 
         e.draw(spriteBatch);
       } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building20")) {
        /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
          .getPosition().y);*/
-        e.setPosition(b.getPosition().x-10, b.getPosition().y -9f);
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y - 9f);
 
         e.draw(spriteBatch);
-      }
-      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building40")) {
+      } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building40")) {
        /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
          .getPosition().y);*/
-        e.setPosition(b.getPosition().x-10, b.getPosition().y -18f);
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y - 18f);
 
         e.draw(spriteBatch);
-      }
-      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building60")) {
+      } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building60")) {
        /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
          .getPosition().y);*/
-        e.setPosition(b.getPosition().x-10, b.getPosition().y -27f);
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y - 27f);
 
         e.draw(spriteBatch);
-      }
-      else if (e != null && b.getFixtureList().get(0).getUserData().equals("building80")) {
+      } else if (e != null && b.getFixtureList().get(0).getUserData().equals("building80")) {
        /* System.out.println("PRINTING BUILDING at x: " + b.getPosition().x + "    y: "+ b
          .getPosition().y);*/
-        e.setPosition(b.getPosition().x-10, b.getPosition().y -36f);
+        e.setPosition(b.getPosition().x - 10, b.getPosition().y - 36f);
 
         e.draw(spriteBatch);
       }
@@ -320,6 +326,7 @@ public class Play extends GameState {
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
     debugRenderer.render(world, camera.combined);
+
   }
 
   public void dispose() {
