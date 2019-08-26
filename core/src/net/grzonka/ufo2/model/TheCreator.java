@@ -19,28 +19,28 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import java.util.Random;
 
-public class TheCreator {
+class TheCreator {
 
-  Texture boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
-  Texture girlTexture = new Texture(Gdx.files.internal("small_girl_transparent_human.png"));
-  Texture house00 = new Texture(Gdx.files.internal("house00.png"));
-  Texture house20a = new Texture(Gdx.files.internal("house20a.png"));
-  Texture house20b = new Texture(Gdx.files.internal("house20b.png"));
-  Texture house20c = new Texture(Gdx.files.internal("house20c.png"));
-  Texture house40a = new Texture(Gdx.files.internal("house40a.png"));
-  Texture house40b = new Texture(Gdx.files.internal("house40b.png"));
-  Texture house40c = new Texture(Gdx.files.internal("house40c.png"));
-  Texture house60a = new Texture(Gdx.files.internal("house60a.png"));
-  Texture house60b = new Texture(Gdx.files.internal("house60b.png"));
-  Texture house60c = new Texture(Gdx.files.internal("house60c.png"));
-  Texture house80a = new Texture(Gdx.files.internal("house80a.png"));
-  Texture house80b = new Texture(Gdx.files.internal("house80b.png"));
-  Texture house80c = new Texture(Gdx.files.internal("house80c.png"));
+  private Texture boyTexture = new Texture(Gdx.files.internal("small_boy_transparent.png"));
+  private Texture girlTexture = new Texture(Gdx.files.internal("small_girl_transparent_human.png"));
+  private Texture house00 = new Texture(Gdx.files.internal("house00.png"));
+  private Texture house20a = new Texture(Gdx.files.internal("house20a.png"));
+  private Texture house20b = new Texture(Gdx.files.internal("house20b.png"));
+  private Texture house20c = new Texture(Gdx.files.internal("house20c.png"));
+  private Texture house40a = new Texture(Gdx.files.internal("house40a.png"));
+  private Texture house40b = new Texture(Gdx.files.internal("house40b.png"));
+  private Texture house40c = new Texture(Gdx.files.internal("house40c.png"));
+  private Texture house60a = new Texture(Gdx.files.internal("house60a.png"));
+  private Texture house60b = new Texture(Gdx.files.internal("house60b.png"));
+  private Texture house60c = new Texture(Gdx.files.internal("house60c.png"));
+  private Texture house80a = new Texture(Gdx.files.internal("house80a.png"));
+  private Texture house80b = new Texture(Gdx.files.internal("house80b.png"));
+  private Texture house80c = new Texture(Gdx.files.internal("house80c.png"));
 
 
-  Random randomGen = new Random();
+  private Random randomGen = new Random();
 
-  public Body createHuman(int xPixel, int yPixel, World world) {
+  Body createHuman(int xPixel, int yPixel, World world) {
 
     Texture humanTexture;
 
@@ -62,11 +62,11 @@ public class TheCreator {
     humanShape.setAsBox(8 / PPM, 9.5f / PPM);
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = humanShape;
-    fixtureDef.density = 0.00002f; // human density
+    fixtureDef.density = 0.985f; // human density
     fixtureDef.friction = 0.4f;
     fixtureDef.restitution = 0f;
     fixtureDef.filter.categoryBits = B2DVars.BIT_HUMAN;
-    fixtureDef.filter.maskBits = BIT_BUILDING | BIT_UFO_LASER | B2DVars.BIT_DESPAWN;
+    fixtureDef.filter.maskBits = BIT_BUILDING | BIT_UFO_LASER | B2DVars.BIT_DESPAWN | BIT_UFO;
     boyBody.setUserData(humanSprite);
     boyBody.createFixture(fixtureDef).setUserData("human");
     humanShape.dispose();
@@ -74,7 +74,7 @@ public class TheCreator {
     return boyBody;
   }
 
-  public Body createBuilding(World world, int xPixel) {
+  Body createBuilding(World world, int xPixel) {
     Texture buildingTexture = house00;
 
     int randomHeight = 0;

@@ -25,6 +25,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import net.grzonka.ufo2.Game;
 import net.grzonka.ufo2.controller.GameStateManager;
 import net.grzonka.ufo2.controller.MyContactListener;
@@ -45,12 +47,9 @@ public class Play extends GameState {
   private Sprite ufoSprite;
   private Body ufoBody;
 
-  private Texture boyTexture;
-  private Sprite boySprite;
-  private Body boyBody;
-
   private TheCreator theCreator;
 
+  private Sound soundEffectLaser;
   private Sound soundEffectWarp;
   private final Sound soundEffectTheme;
 
@@ -58,8 +57,8 @@ public class Play extends GameState {
 
 
   // variables for input handeling
-  final float MAX_VELOCITY = 70;
-  final float moveSpeed = 1.5f;
+  final float MAX_VELOCITY = 10;
+  final float moveSpeed = 3f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
   private float srcX;
@@ -81,6 +80,7 @@ public class Play extends GameState {
 
     soundEffectWarp = Gdx.audio.newSound(Gdx.files.internal("sound/warp.ogg"));
     soundEffectTheme = Gdx.audio.newSound(Gdx.files.internal("sound/theme.ogg"));
+    soundEffectLaser = Gdx.audio.newSound(Gdx.files.internal("sound/laser.ogg"));
 
     soundEffectTheme.loop(1f);
 
@@ -152,7 +152,7 @@ public class Play extends GameState {
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
     ufoFixtureDef.density = 0f; // ufo density (kg/m^2)
-    ufoFixtureDef.friction = 0.4f;
+    ufoFixtureDef.friction = 0.0f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
     ufoFixtureDef.filter.maskBits = BIT_BORDER | B2DVars.BIT_BUILDING;
@@ -208,21 +208,35 @@ public class Play extends GameState {
     }
 
     if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-      Game.increaseHealth(-200);
+
       if (customContactListener.isHumanSpotted()) {
-        System.out.println("ZAP!!!");
+        //System.out.println("ZAP!!!");
+        soundEffectWarp.play(0.5f);
         Body human = customContactListener.getHuman();
         // removing fixture around human in order for them to disappear.
         // TODO: make this more interesting to watch maybe
         if (human != null) {
           Game.increaseHealth(1000);
           Game.increaseScore(1);
-          human.applyForce(0f, 5000f, 0, 0, true);
-          soundEffectWarp.play(0.5f);
+          human.applyForceToCenter(0f, 2700f, true);
+          final Body temp = human;
+          new java.util.Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+              addToGarbageCollector(temp);
+
+            }
+          }, 300);
+
         }
+      } else {
+        soundEffectLaser.play(0.5f);
+        Game.increaseHealth(-200);
       }
 
+
     }
+
 
   }
 
@@ -338,7 +352,6 @@ public class Play extends GameState {
   public void dispose() {
     spriteBatch.dispose();
     background.dispose();
-    boyTexture.dispose();
     ufoTexture.dispose();
   }
 

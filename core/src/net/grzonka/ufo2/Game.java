@@ -65,9 +65,6 @@ public class Game extends ApplicationAdapter {
     camera = new OrthographicCamera(V_WIDTH, V_HEIGHT);
     camera.translate(80f, 72f, 0f);
 
-
-
-
     gameStateManager = new GameStateManager(this);
 
     // box2d initialisation // TODO: need to decide wether or not this is needed.
