@@ -58,7 +58,7 @@ public class Play extends GameState {
 
   // variables for input handeling
   final float MAX_VELOCITY = 10;
-  final float moveSpeed = 20f;
+  final float moveSpeed = 200f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
   private float srcX;
@@ -146,13 +146,14 @@ public class Play extends GameState {
     UfoBodyDef.type = BodyType.DynamicBody;
     UfoBodyDef.position.set(60 / PPM, 120 / PPM);
     ufoBody = world.createBody(UfoBodyDef);
+    ufoBody.setGravityScale(0);
 
     PolygonShape ufoShape = new PolygonShape();
     ufoShape.setAsBox(20 / PPM, 7.5f / PPM);
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
-    ufoFixtureDef.density = 0f; // ufo density (kg/m^2)
-    ufoFixtureDef.friction = 0.0f;
+    ufoFixtureDef.density = .3f; // ufo density (kg/m^2)
+    ufoFixtureDef.friction = 0.7f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
     ufoFixtureDef.filter.maskBits = BIT_BORDER | B2DVars.BIT_BUILDING;
@@ -181,7 +182,8 @@ public class Play extends GameState {
     // ufo movement
     Vector2 vel = ufoBody.getLinearVelocity();
     Vector2 pos = ufoBody.getPosition();
-    ufoBody.applyForceToCenter(0f, 10f, true);
+
+    //ufoBody.applyForceToCenter(0f, 10f, true);
     // apply left impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
       //ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
@@ -342,6 +344,10 @@ public class Play extends GameState {
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
     debugRenderer.render(world, camera.combined);
+
+  }
+
+  public void resetUfoPosition(){
 
   }
 
