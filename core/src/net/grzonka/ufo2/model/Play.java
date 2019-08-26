@@ -219,15 +219,7 @@ public class Play extends GameState {
           Game.increaseHealth(1000);
           Game.increaseScore(1);
           human.applyForceToCenter(0f, 2700f, true);
-          final Body temp = human;
-          new java.util.Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-              addToGarbageCollector(temp);
-
-            }
-          }, 300);
-
+          addToGarbageCollector(human);
         }
       } else {
         soundEffectLaser.play(0.5f);
@@ -267,7 +259,7 @@ public class Play extends GameState {
 
     spriteBatch.begin();
 
-    spriteBatch.draw(background, 0, 0, 160, 15, (int)srcX, 0, 1600, 144, false, false);
+    spriteBatch.draw(background, 0, 0, 160, 15, (int) srcX, 0, 1600, 144, false, false);
     srcX += 0.5;
 
     if (Game.gameHasStarted) {
