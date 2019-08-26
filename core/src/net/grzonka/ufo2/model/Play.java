@@ -43,6 +43,10 @@ public class Play extends GameState {
   private Texture background;
   private Sprite backgroundSprite;
 
+  Texture laserTexture = new Texture(Gdx.files.internal("laser.png"));
+  Sprite laserSprite = new Sprite(laserTexture);
+
+
   private Texture ufoTexture;
   private Sprite ufoSprite;
   private Body ufoBody;
@@ -62,6 +66,7 @@ public class Play extends GameState {
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
   private float srcX;
+  private boolean spacePressed = false;
 
 
   public Play(GameStateManager gsm) {
@@ -74,6 +79,8 @@ public class Play extends GameState {
     background.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.MipMapLinearLinear);
     background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     backgroundSprite = new Sprite(background);
+
+    laserSprite.setScale(1 / PPM);
 
     world = new World(B2DVars.GRAVITY, true); // Vector2 creates gravity
     world.setContactListener(customContactListener);
@@ -187,25 +194,25 @@ public class Play extends GameState {
     // apply left impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
       //ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
-      ufoBody.applyForceToCenter(-moveSpeed,0,true);
+      ufoBody.applyForceToCenter(-moveSpeed, 0, true);
       if (ufoRotation < 0.3) {
         ufoRotation += 0.1f;
       }
     }
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && vel.x < MAX_VELOCITY) {
       //ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
-      ufoBody.applyForceToCenter(moveSpeed,0,true);
+      ufoBody.applyForceToCenter(moveSpeed, 0, true);
       if (ufoRotation > -0.3) {
         ufoRotation -= 0.1f;
       }
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP) && vel.y < MAX_VELOCITY) {
       //ufoBody.applyLinearImpulse(0, moveSpeed, pos.x, pos.y, true);
-      ufoBody.applyForceToCenter(0,moveSpeed,true);
+      ufoBody.applyForceToCenter(0, moveSpeed, true);
     }
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
       //ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
-      ufoBody.applyForceToCenter(0,-moveSpeed,true);
+      ufoBody.applyForceToCenter(0, -moveSpeed, true);
     }
 
     if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !Game.gameHasStarted) {
@@ -214,7 +221,11 @@ public class Play extends GameState {
     }
 
     if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-
+      spacePressed = true;
+     /* laserSprite.setPosition(ufoBody.getPosition().x, ufoBody.getPosition().y);
+      spriteBatch.begin();
+      laserSprite.draw(spriteBatch);
+      spriteBatch.end();*/
       if (customContactListener.isHumanSpotted()) {
         //System.out.println("ZAP!!!");
         soundEffectWarp.play(0.5f);
@@ -247,6 +258,7 @@ public class Play extends GameState {
     handleInput();
     world.step(dt, 8, 3);
     clearGarbageCollector();
+    //spacePressed = false;
   }
 
   private void clearGarbageCollector() {
@@ -334,6 +346,14 @@ public class Play extends GameState {
       e.setRotation(ufoRotation * 30);
       e.draw(spriteBatch);
     }
+    // drawing laser:
+    if (spacePressed) {
+      laserSprite.setScale(.1f);
+      spriteBatch.draw(laserSprite,ufoBody.getPosition().x - 1f, ufoBody.getPosition().y - 6f
+          , 2, 60 / 10);
+      spacePressed = false;
+    }
+
     for (Body b : dummyBodies) {
       Sprite temp = (Sprite) b.getUserData();
       if (temp != null) {
@@ -347,7 +367,7 @@ public class Play extends GameState {
 
   }
 
-  public void resetUfoPosition(){
+  public void resetUfoPosition() {
 
   }
 
