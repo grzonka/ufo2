@@ -40,7 +40,6 @@ public class MyContactListener implements ContactListener {
       humanSpotted = true;
     }
 
-
     // handles humans exiting screen
     if (fa.getUserData() != null && fa.getUserData().equals("despawn") && fb.getUserData() != null
         && fb.getUserData().equals(
