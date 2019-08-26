@@ -119,6 +119,10 @@ public class Game extends ApplicationAdapter {
         increaseHealth(-6);
       } else {
         System.out.println("GAME Should end here");
+        // TODO: display highscore here
+        gameHasStarted = false;
+        health = MAX_HEALTH;
+        score = 0;
       }
       shapeRenderer.end();
       spriteBatch.end();
