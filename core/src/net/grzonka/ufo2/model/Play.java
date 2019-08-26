@@ -202,22 +202,28 @@ public class Play extends GameState {
       ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
     }
 
-    if (Gdx.input.isKeyPressed(Keys.SPACE) && !Game.gameHasStarted) {
+    if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !Game.gameHasStarted) {
       Game.gameHasStarted = true;
+
     }
 
-    if (Gdx.input.isKeyPressed(Keys.SPACE) && customContactListener.isHumanSpotted()) {
-      System.out.println("ZAP!!!");
-      Body human = customContactListener.getHuman();
-      // removing fixture around human in order for them to disappear.
-      // TODO: make this more interesting to watch maybe
-      if (human != null) {
-        Game.increaseHealth(1000);
-        Game.increaseScore(1);
-        human.applyForce(0f, 5000f, 0, 0, true);
-        soundEffectWarp.play(0.5f);
+    if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+      Game.increaseHealth(-200);
+      if (customContactListener.isHumanSpotted()) {
+        System.out.println("ZAP!!!");
+        Body human = customContactListener.getHuman();
+        // removing fixture around human in order for them to disappear.
+        // TODO: make this more interesting to watch maybe
+        if (human != null) {
+          Game.increaseHealth(1000);
+          Game.increaseScore(1);
+          human.applyForce(0f, 5000f, 0, 0, true);
+          soundEffectWarp.play(0.5f);
+        }
       }
+
     }
+
   }
 
   public static void addToGarbageCollector(Body body) {
