@@ -54,7 +54,18 @@ public class MyContactListener implements ContactListener {
       System.out.println("HUMAN REACHED THE LIGHT!"); // TODO: remove debug
       //humanSpotted = true;
       Play.addToGarbageCollector(fa.getBody());
+    }
 
+    // handles ufoSensor - human interaction
+    if (fa.getUserData() != null && fa.getUserData().equals("player") && fb.getUserData() != null
+        && fb.getUserData().equals(
+        "building")) {
+      System.out.println("PLAYER CRASHED INTO BUILDING. OUCH!"); // TODO: remove debug
+    }
+    if (fb.getUserData() != null && fb.getUserData().equals("player") && fa.getUserData() != null
+        && fa.getUserData().equals(
+        "building")) {
+      System.out.println("PLAYER CRASHED INTO BUILDING. OUCH!"); // TODO: remove debug
     }
 
     // handle buildings exiting screen

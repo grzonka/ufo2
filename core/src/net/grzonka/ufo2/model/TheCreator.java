@@ -37,7 +37,6 @@ class TheCreator {
   private Texture house80b = new Texture(Gdx.files.internal("house80b.png"));
   private Texture house80c = new Texture(Gdx.files.internal("house80c.png"));
 
-
   private Random randomGen = new Random();
 
   Body createHuman(int xPixel, int yPixel, World world) {

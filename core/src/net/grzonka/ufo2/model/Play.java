@@ -58,7 +58,7 @@ public class Play extends GameState {
 
   // variables for input handeling
   final float MAX_VELOCITY = 10;
-  final float moveSpeed = 200f;
+  final float moveSpeed = 20f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
   private float srcX;
@@ -152,7 +152,7 @@ public class Play extends GameState {
     ufoShape.setAsBox(20 / PPM, 7.5f / PPM);
     FixtureDef ufoFixtureDef = new FixtureDef();
     ufoFixtureDef.shape = ufoShape;
-    ufoFixtureDef.density = .3f; // ufo density (kg/m^2)
+    ufoFixtureDef.density = .0f; // ufo density (kg/m^2)
     ufoFixtureDef.friction = 0.7f;
     ufoFixtureDef.restitution = 0.0f;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO;
