@@ -363,7 +363,7 @@ public class Play extends GameState {
     //boySprite.draw(spriteBatch);
     ufoSprite.draw(spriteBatch);
     spriteBatch.end();
-    debugRenderer.render(world, camera.combined);
+    // debugRenderer.render(world, camera.combined);
 
   }
 
