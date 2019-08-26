@@ -58,7 +58,7 @@ public class Play extends GameState {
 
   // variables for input handeling
   final float MAX_VELOCITY = 10;
-  final float moveSpeed = 3f;
+  final float moveSpeed = 20f;
   final float cameraSpeed = 1.5f;
   float ufoRotation = 0;
   private float srcX;
@@ -159,7 +159,7 @@ public class Play extends GameState {
     ufoBody.setUserData(ufoSprite);
     ufoBody.createFixture(ufoFixtureDef).setUserData("player");
 
-    ufoShape.setAsBox(.5f / PPM, 30f / PPM, new Vector2(0 / PPM, -30 / PPM), 0);
+    ufoShape.setAsBox(4f / PPM, 30f / PPM, new Vector2(0 / PPM, -30 / PPM), 0);
     ufoFixtureDef.shape = ufoShape;
     ufoFixtureDef.isSensor = true;
     ufoFixtureDef.filter.categoryBits = B2DVars.BIT_UFO_LASER;
@@ -184,22 +184,26 @@ public class Play extends GameState {
     ufoBody.applyForceToCenter(0f, 10f, true);
     // apply left impulse, but only if max velocity is not reached yet
     if (Gdx.input.isKeyPressed(Keys.LEFT) && vel.x > -MAX_VELOCITY) {
-      ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
+      //ufoBody.applyLinearImpulse(-moveSpeed, 0, pos.x, pos.y, true);
+      ufoBody.applyForceToCenter(-moveSpeed,0,true);
       if (ufoRotation < 0.3) {
         ufoRotation += 0.1f;
       }
     }
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && vel.x < MAX_VELOCITY) {
-      ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
+      //ufoBody.applyLinearImpulse(moveSpeed, 0, pos.x, pos.y, true);
+      ufoBody.applyForceToCenter(moveSpeed,0,true);
       if (ufoRotation > -0.3) {
         ufoRotation -= 0.1f;
       }
     }
     if (Gdx.input.isKeyPressed(Input.Keys.UP) && vel.y < MAX_VELOCITY) {
-      ufoBody.applyLinearImpulse(0, moveSpeed, pos.x, pos.y, true);
+      //ufoBody.applyLinearImpulse(0, moveSpeed, pos.x, pos.y, true);
+      ufoBody.applyForceToCenter(0,moveSpeed,true);
     }
     if (Gdx.input.isKeyPressed(Keys.DOWN) && vel.y < MAX_VELOCITY) {
-      ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
+      //ufoBody.applyLinearImpulse(0, -moveSpeed, pos.x, pos.y, true);
+      ufoBody.applyForceToCenter(0,-moveSpeed,true);
     }
 
     if (Gdx.input.isKeyJustPressed(Keys.SPACE) && !Game.gameHasStarted) {
@@ -216,7 +220,7 @@ public class Play extends GameState {
         // removing fixture around human in order for them to disappear.
         // TODO: make this more interesting to watch maybe
         if (human != null) {
-          Game.increaseHealth(1000);
+          Game.increaseHealth(2000);
           Game.increaseScore(1);
           human.applyForceToCenter(0f, 2700f, true);
           addToGarbageCollector(human);
@@ -267,7 +271,7 @@ public class Play extends GameState {
       if (srcX % 15 == 0) {
         dummyBodies.add(theCreator.createBuilding(world, 300));
       }
-      if (srcX % 90 == 0) {
+      if (srcX % 60 == 0) {
         dummyBodies.add(theCreator.createHuman(300, 120, world));
       }
     }
